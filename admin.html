@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sindh Mart Admin</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f7f5;color:#17231d}
+header{background:#087443;color:white;padding:18px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:24px}
+header p{margin:5px 0 0;opacity:.9}
+.wrap{max-width:900px;margin:auto;padding:16px}
+.card{background:white;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 10px #00000012}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{text-align:center;padding:14px;background:white;border-radius:14px}
+.stat b{display:block;font-size:25px;color:#087443}
+.order{border:1px solid #dde6e1;border-radius:14px;padding:14px;margin-top:12px}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.order h3{margin:0;color:#087443}
+.small{font-size:13px;color:#66736c;line-height:1.5}
+.items{background:#f7faf8;border-radius:10px;padding:10px;margin:10px 0}
+.item{display:flex;justify-content:space-between;padding:4px 0}
+select{padding:9px;border:1px solid #ccd8d1;border-radius:8px;background:white}
+button{border:0;border-radius:10px;padding:10px 14px;background:#087443;color:white;font-weight:bold}
+.total{font-size:19px;font-weight:bold}
+.empty{text-align:center;padding:30px;color:#68756e}
+#login{max-width:400px;margin:60px auto}
+input{width:100%;padding:12px;border:1px solid #ccd8d1;border-radius:9px;margin:8px 0 12px}
+.err{color:#c62828;font-size:14px}
+@media(max-width:600px){.stats{grid-template-columns:1fr 1fr}.row{align-items:flex-start}.order .row:last-child{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<div id="login" class="card">
+  <h2>🔐 Sindh Mart Admin</h2>
+  <p>Enter admin PIN to continue.</p>
+  <input id="pin" type="password" inputmode="numeric" placeholder="Admin PIN">
+  <button onclick="login()">Open Admin Panel</button>
+  <div id="loginErr" class="err"></div>
+  <p class="small">Testing PIN: <b>1234</b></p>
+</div>
+
+<div id="app" style="display:none">
+<header>
+  <h1>🛒 Sindh Mart Admin</h1>
+  <p>Orders Dashboard • Sukkur & Rohri</p>
+</header>
+
+<div class="wrap">
+  <div class="stats">
+    <div class="stat"><span>Pending</span><b id="pending">0</b></div>
+    <div class="stat"><span>Confirmed</span><b id="confirmed">0</b></div>
+    <div class="stat"><span>Delivered</span><b id="delivered">0</b></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="row">
+      <h2 style="margin:0">Orders</h2>
+      <button onclick="loadOrders()">↻ Refresh</button>
+    </div>
+    <div id="orders"><div class="empty">Loading orders...</div></div>
+  </div>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD2J8uu4ZNIp0ubB9Opp1Uin8HnJzsa1cs",
+  authDomain: "sindh-mart.firebaseapp.com",
+  databaseURL: "https://sindh-mart-default-rtdb.firebaseio.com",
+  projectId: "sindh-mart",
+  storageBucket: "sindh-mart.firebasestorage.app",
+  messagingSenderId: "362306587082",
+  appId: "1:362306587082:web:e32acf1002ab36a1106733",
+  measurementId: "G-TTRXHPP213"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+let ordersData = {};
+
+window.login = function(){
+  const pin = document.getElementById("pin").value;
+  if(pin === "1234"){
+    document.getElementById("login").style.display="none";
+    document.getElementById("app").style.display="block";
+    loadOrders();
+  }else{
+    document.getElementById("loginErr").textContent="Wrong PIN.";
+  }
+};
+
+window.loadOrders = function(){
+  onValue(ref(db,"orders"), snap=>{
+    ordersData = snap.val() || {};
+    renderOrders();
+  }, err=>{
+    document.getElementById("orders").innerHTML='<div class="empty">Could not load orders: '+escapeHtml(err.message)+'</div>';
+  }, {onlyOnce:false});
+};
+
+window.changeStatus = async function(id,status){
+  try{
+    await update(ref(db,"orders/"+id),{status});
+  }catch(e){
+    alert("Status update failed: "+e.message);
+  }
+};
+
+function renderOrders(){
+  const list=Object.entries(ordersData).sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
+  let p=0,c=0,d=0;
+  list.forEach(([id,o])=>{
+    if(o.status==="Pending")p++;
+    if(o.status==="Confirmed")c++;
+    if(o.status==="Delivered")d++;
+  });
+  document.getElementById("pending").textContent=p;
+  document.getElementById("confirmed").textContent=c;
+  document.getElementById("delivered").textContent=d;
+
+  if(!list.length){
+    document.getElementById("orders").innerHTML='<div class="empty">No orders yet.</div>';
+    return;
+  }
+
+  document.getElementById("orders").innerHTML=list.map(([id,o])=>{
+    const cust=o.customer||{};
+    const items=Array.isArray(o.items)?o.items:Object.values(o.items||{});
+    const itemHtml=items.map(x=>`
+      <div class="item">
+        <span>${escapeHtml(x.name||x.productId||"Product")} × ${Number(x.quantity||0)}</span>
+        <b>Rs. ${Number(x.subtotal ?? ((x.price||0)*(x.quantity||0))).toLocaleString()}</b>
+      </div>`).join("");
+
+    const date=o.createdAt?new Date(o.createdAt).toLocaleString("en-PK"):"—";
+    return `<div class="order">
+      <div class="row">
+        <h3>Order #${escapeHtml(o.orderNumber||id.slice(-6).toUpperCase())}</h3>
+        <select onchange="changeStatus('${escapeAttr(id)}',this.value)">
+          ${["Pending","Confirmed","Out for Delivery","Delivered","Cancelled"].map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}
+        </select>
+      </div>
+      <div class="small">Order ID: ${escapeHtml(id)}<br>${escapeHtml(date)}</div>
+      <hr>
+      <b>Customer</b>
+      <div class="small">${escapeHtml(cust.name||"—")} • ${escapeHtml(cust.phone||"—")}<br>${escapeHtml(cust.area||"—")} — ${escapeHtml(cust.address||"—")}</div>
+      <div class="items">${itemHtml||'<div class="small">No items</div>'}</div>
+      <div class="row"><span>${escapeHtml(o.paymentMethod||"—")}</span><span class="total">Rs. ${Number(o.total||0).toLocaleString()}</span></div>
+    </div>`;
+  }).join("");
+}
+
+function escapeHtml(v){
+  return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+function escapeAttr(v){return String(v).replace(/'/g,"\\'");}
+</script>
+</body>
+</html>
