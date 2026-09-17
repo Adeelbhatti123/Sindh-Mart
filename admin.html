@@ -18,6 +18,7 @@ input,select{width:100%;padding:11px;margin:6px 0 12px;border:1px solid #d1d5db;
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hidden{display:none}
 .badge{display:inline-block;padding:4px 8px;border-radius:20px;background:#eee;font-size:12px}
 @media(max-width:600px){.row{grid-template-columns:1fr}}
+#editOverlay.hidden{display:none}
 </style>
 </head>
 <body>
@@ -63,6 +64,31 @@ input,select{width:100%;padding:11px;margin:6px 0 12px;border:1px solid #d1d5db;
 <div class="card">
 <h3>🛍️ Existing Products</h3>
 <div id="productsList">Loading...</div>
+</div>
+
+<div id="editOverlay" class="hidden" style="position:fixed;inset:0;background:#0008;z-index:1000;padding:15px;overflow:auto">
+<div class="card" style="max-width:600px;margin:25px auto">
+<h3>✏️ Edit Product</h3>
+<input id="editId" type="hidden">
+<label class="muted">Product Name</label>
+<input id="editName" placeholder="Product name">
+<div class="row">
+<div><label class="muted">Price</label><input id="editPrice" type="number" min="0" placeholder="Price"></div>
+<div><label class="muted">Category</label><select id="editCategory"><option value="">Select category</option></select></div>
+</div>
+<label class="muted">Product Image URL</label>
+<input id="editImage" placeholder="Image URL (optional)">
+<label class="muted">Availability</label>
+<select id="editAvailable">
+<option value="true">✅ Available</option>
+<option value="false">❌ Out of Stock</option>
+</select>
+<div style="display:flex;gap:8px">
+<button onclick="saveProduct()">💾 Save Changes</button>
+<button class="secondary" onclick="closeEdit()">Cancel</button>
+</div>
+<p id="editMessage" class="muted"></p>
+</div>
 </div>
 </section>
 </div>
@@ -153,12 +179,44 @@ $("productMessage").textContent="✅ Product added successfully.";
 
 window.editProduct=async id=>{
 const snap=await get(ref(db,"products/"+id));const p=snap.val();if(!p)return;
-const name=prompt("Product name:",p.name||"");if(name===null)return;
-const price=prompt("Price:",p.price??0);if(price===null)return;
-const category=prompt("Category ID:",p.category||p.categoryId||"");if(category===null)return;
-const image=prompt("Image URL:",p.image||p.imageUrl||"");if(image===null)return;
-await update(ref(db,"products/"+id),{name:name.trim(),price:Number(price),category:category.trim(),image:image.trim()});
-alert("✅ Product updated.");
+$("editId").value=id;
+$("editName").value=p.name||"";
+$("editPrice").value=p.price??"";
+$("editImage").value=p.image||p.imageUrl||"";
+$("editAvailable").value=(p.available!==false)?"true":"false";
+
+const currentCategory=p.category||p.categoryId||"";
+$("editCategory").innerHTML='<option value="">Select category</option>';
+Object.entries(categories).forEach(([cid,c])=>{
+const o=document.createElement("option");
+o.value=cid;
+o.textContent=typeof c==="string"?c:(c.name||cid);
+if(cid===currentCategory)o.selected=true;
+$("editCategory").appendChild(o);
+});
+$("editOverlay").classList.remove("hidden");
+};
+
+window.closeEdit=()=>{
+$("editOverlay").classList.add("hidden");
+$("editMessage").textContent="";
+};
+
+window.saveProduct=async()=>{
+const id=$("editId").value;
+const name=$("editName").value.trim();
+const price=Number($("editPrice").value);
+const category=$("editCategory").value;
+const image=$("editImage").value.trim();
+const available=$("editAvailable").value==="true";
+
+if(!name||price<=0||!category){
+$("editMessage").textContent="Name, price and category are required.";
+return;
+}
+await update(ref(db,"products/"+id),{name,price,category,image,available});
+$("editMessage").textContent="✅ Product updated successfully.";
+setTimeout(closeEdit,700);
 };
 
 window.toggleStock=async(id,current)=>{
