@@ -1,0 +1,123 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sindh Mart POS</title><style>*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f4f7f5;color:#17231c}header{background:#159447;color:#fff;padding:14px}nav{display:flex;gap:6px;overflow:auto;background:#fff;padding:9px;position:sticky;top:0;z-index:2}button{border:0;border-radius:8px;padding:9px;background:#e7f4eb;color:#116b35;font-weight:bold}nav button.active,.primary{background:#159447;color:#fff}main{padding:12px;max-width:1200px;margin:auto}.tab{display:none}.tab.active{display:block}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.card{background:#fff;padding:13px;border-radius:11px;box-shadow:0 1px 5px #0001}.card b{display:block;font-size:19px;margin-top:5px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}input,select{width:100%;padding:10px;margin:4px 0 9px;border:1px solid #ccd5cf;border-radius:8px}.product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.p,.cart,.form{background:#fff;padding:10px;border-radius:10px;margin-top:10px}.p button{width:100%;background:#159447;color:#fff}.cartline{display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #eee}.tablewrap{overflow:auto;background:#fff}table{width:100%;border-collapse:collapse;min-width:750px}th,td{padding:8px;border-bottom:1px solid #eee;text-align:left;font-size:13px}th{background:#eef6f0}.green{color:#12863f}.danger{color:#c62828}@media(min-width:700px){.cards{grid-template-columns:repeat(4,1fr)}.grid{grid-template-columns:repeat(4,1fr)}.product-grid{grid-template-columns:repeat(5,1fr)}}
+.invoice-modal{display:none;position:fixed;inset:0;background:#0008;z-index:20;padding:15px;overflow:auto}
+.invoice-box{background:#fff;max-width:430px;margin:20px auto;padding:20px;border-radius:10px}
+.invoice-head{text-align:center;border-bottom:1px dashed #555;padding-bottom:10px;margin-bottom:10px}
+.receipt-title{font-size:24px;font-weight:800;letter-spacing:.5px}
+.receipt-meta{font-size:12px;line-height:1.6}
+.receipt-items{border-top:1px dashed #555;border-bottom:1px dashed #555;margin-top:10px}
+.receipt-items th,.receipt-items td{padding:7px 3px;font-size:12px}
+.receipt-items th{background:#fff}
+.receipt-summary{font-size:13px;line-height:1.8;margin-top:8px}
+.grand-total{font-size:20px;font-weight:800;border-top:1px solid #222;border-bottom:1px solid #222;padding:7px 0;margin-top:5px}
+.receipt-footer{text-align:center;font-size:11px;margin-top:15px}
+.invoice-table{width:100%;border-collapse:collapse}.invoice-table th,.invoice-table td{padding:6px;border-bottom:1px solid #ddd;font-size:13px}.invoice-total{text-align:right;font-size:18px;font-weight:bold;margin-top:12px}
+.invoice-actions{display:flex;gap:8px;margin-top:15px}.invoice-actions button{flex:1}
+@media print{
+body>*:not(#invoiceModal){display:none!important}
+#invoiceModal{display:block!important;position:static;background:#fff;padding:0}
+.invoice-box{margin:0;max-width:none;border-radius:0;padding:8px;width:100%}
+.invoice-actions{display:none!important}
+}
+</style></head><body><header><b>Sindh Mart POS</b><br><small>POS • Inventory • Sales & Profit</small></header><nav><button class="active" onclick="tab('dash',this)">Dashboard</button><button onclick="tab('pos',this)">POS</button><button onclick="tab('inv',this)">Inventory</button><button onclick="tab('rep',this)">Reports</button><button onclick="tab('sales',this)">Sales History</button></nav><main>
+<section id="dash" class="tab active"><h2>Dashboard</h2><div class="cards"><div class="card">Products<b id="np">0</b></div><div class="card">Stock Quantity<b id="nq">0</b></div><div class="card">Stock Cost<b id="sc">Rs. 0</b></div><div class="card">Stock Selling<b id="ss">Rs. 0</b></div><div class="card">Expected Profit<b class="green" id="ep">Rs. 0</b></div><div class="card">Today Sales<b id="ts">Rs. 0</b></div><div class="card">Today Profit<b class="green" id="tp">Rs. 0</b></div><div class="card">Low Stock<b class="danger" id="low">0</b></div></div></section>
+<section id="pos" class="tab"><h2>POS Billing</h2><input id="ps" placeholder="Search product" oninput="renderPOS()"><div id="pg" class="product-grid"></div><button class="primary" onclick="showLastInvoice()" style="width:100%;margin:8px 0">🧾 View / Print Last Invoice</button><div class="cart"><h3>Bill</h3><div id="cart"></div><label>Discount</label><input id="disc" type="number" value="0" oninput="renderCart()"><h3>Total: <span id="total">Rs. 0</span></h3><select id="pay"><option>Cash</option><option>Online</option><option>Bank</option></select><button class="primary" style="width:100%" onclick="sale()">Complete Sale</button></div></section>
+<section id="inv" class="tab"><h2>Inventory</h2><div class="form"><div class="grid"><input id="name" placeholder="Product name"><input id="cat" placeholder="Category"><input id="sku" placeholder="SKU"><input id="cost" type="number" placeholder="Cost / Purchase Price"><input id="sell" type="number" placeholder="Selling Price"><input id="qty" type="number" placeholder="Stock Quantity"><input id="min" type="number" value="5" placeholder="Minimum Stock"><input id="img" placeholder="Image URL (optional)"></div><button class="primary" onclick="save()">Save Product</button> <button onclick="clearForm()">Clear</button></div><input id="is" placeholder="Search inventory" oninput="renderInv()"><div class="tablewrap"><table><thead><tr><th>Product</th><th>Category</th><th>Cost</th><th>Selling</th><th>Qty</th><th>Stock Cost</th><th>Stock Selling</th><th>Profit</th><th>Action</th></tr></thead><tbody id="ib"></tbody></table></div></section>
+<section id="rep" class="tab"><h2>Sales & Profit</h2><div class="cards"><div class="card">Today<b id="rd">Rs. 0 / Profit Rs. 0</b></div><div class="card">7 Days<b id="rw">Rs. 0 / Profit Rs. 0</b></div><div class="card">30 Days<b id="rm">Rs. 0 / Profit Rs. 0</b></div><div class="card">365 Days<b id="ry">Rs. 0 / Profit Rs. 0</b></div></div></section>
+<section id="sales" class="tab"><h2>Sales History</h2><div class="tablewrap"><table><thead><tr><th>Date</th><th>Invoice</th><th>Items</th><th>Sales</th><th>Cost</th><th>Profit</th><th>Payment</th></tr></thead><tbody id="sb"></tbody></table></div></section></main>
+
+<div id="invoiceModal" class="invoice-modal">
+  <div class="invoice-box">
+    <div id="invoiceContent"></div>
+    <div class="invoice-actions">
+      <button class="primary" onclick="printInvoice()">🖨️ PRINT BILL</button>
+      <button onclick="closeInvoice()">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";import{getDatabase,ref,onValue,push,set,update,remove}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const app=initializeApp({apiKey:"AIzaSyD2J8uu4ZNIp0ubB9Opp1UinH8nJzsa1cs",authDomain:"sindh-mart.firebaseapp.com",databaseURL:"https://sindh-mart-default-rtdb.firebaseio.com",projectId:"sindh-mart",storageBucket:"sindh-mart.firebasestorage.app",messagingSenderId:"362306587082",appId:"1:362306587082:web:e32acf1002ab36a1106733"}),db=getDatabase(app);let P={},S={},C={},edit=null; window.lastInvoice=null;
+const M=n=>"Rs. "+Number(n||0).toLocaleString("en-PK"), E=s=>String(s??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[x]));
+onValue(ref(db,"products"),x=>{P=x.val()||{};render()});onValue(ref(db,"sales"),x=>{S=x.val()||{};render()});
+window.tab=(id,b)=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active")};
+window.renderPOS=()=>{let q=ps.value.toLowerCase();pg.innerHTML=Object.entries(P).filter(([i,p])=>(p.name||"").toLowerCase().includes(q)&&+(p.stock??p.quantity??0)>0).map(([i,p])=>`<div class=p>${E(p.name)}<h4>${M(p.sellingPrice??p.price)}</h4>Stock: ${p.stock??p.quantity}<br><button onclick="add('${i}')">Add</button></div>`).join("")||"No products"};window.add=i=>{C[i]=(C[i]||0)+1;let q=+(P[i].stock??P[i].quantity??0);if(C[i]>q)C[i]=q;renderCart()};window.ch=(i,d)=>{C[i]=(C[i]||0)+d;if(C[i]<=0)delete C[i];renderCart()};window.renderCart=()=>{let t=0,h="";for(let[i,q]of Object.entries(C)){let p=P[i],v=+(p.sellingPrice??p.price??0)*q;t+=v;h+=`<div class=cartline>${E(p.name)} × ${q} = ${M(v)} <span><button onclick="ch('${i}',-1)">−</button><button onclick="ch('${i}',1)">+</button></span></div>`}t=Math.max(0,t-+(disc.value||0));cart.innerHTML=h||"Cart empty";total.textContent=M(t)};
+window.sale=async()=>{
+ let ids=Object.keys(C);
+ if(!ids.length)return alert("Cart empty");
+ let sub=0,costv=0,items=[];
+ ids.forEach(i=>{
+   let p=P[i],q=C[i],sp=+(p.sellingPrice??p.price??0),cp=+(p.costPrice??p.purchasePrice??0);
+   sub+=sp*q; costv+=cp*q;
+   items.push({productId:i,name:p.name,qty:q,sellingPrice:sp,costPrice:cp});
+ });
+ let d=Math.max(0,+(disc.value||0)),tot=Math.max(0,sub-d),profit=tot-costv;
+ let invoice="SM-"+Date.now().toString().slice(-8);
+ let invoiceData={invoice,createdAt:Date.now(),items,subtotal:sub,discount:d,total:tot,payment:pay.value,profit,cost:costv};
+
+ try{
+   // Save the invoice first.
+   await set(push(ref(db,"sales")),invoiceData);
+
+   // Reduce stock.
+   let u={};
+   ids.forEach(i=>{
+     let old=+(P[i].stock??P[i].quantity??0);
+     u["products/"+i+"/stock"]=Math.max(0,old-C[i]);
+   });
+   await update(ref(db),u);
+
+   // IMPORTANT: save the invoice in browser memory BEFORE clearing the cart.
+   window.lastInvoice=invoiceData;
+   showInvoice(invoiceData);
+
+   C={};
+   disc.value=0;
+   renderCart();
+ }catch(err){
+   console.error(err);
+   alert("Sale save nahi hui. Firebase connection/rules check karein.");
+ }
+};
+window.save=async()=>{if(!name.value.trim())return alert("Product name required");let d={name:name.value.trim(),category:cat.value.trim(),sku:sku.value.trim(),costPrice:+(cost.value||0),sellingPrice:+(sell.value||0),stock:+(qty.value||0),quantity:+(qty.value||0),minStock:+(min.value||0),image:img.value.trim(),updatedAt:Date.now()};if(edit)await update(ref(db,"products/"+edit),d);else{d.createdAt=Date.now();await set(push(ref(db,"products")),d)}clearForm()};
+window.editP=i=>{let p=P[i];edit=i;name.value=p.name||"";cat.value=p.category||"";sku.value=p.sku||"";cost.value=p.costPrice??p.purchasePrice??0;sell.value=p.sellingPrice??p.price??0;qty.value=p.stock??p.quantity??0;min.value=p.minStock??5;img.value=p.image||"";scrollTo(0,0)};window.del=async i=>{if(confirm("Delete product?"))await remove(ref(db,"products/"+i))};window.clearForm=()=>{edit=null;["name","cat","sku","cost","sell","qty","img"].forEach(i=>document.getElementById(i).value="");min.value=5};
+window.renderInv=()=>{let q=is.value.toLowerCase();ib.innerHTML=Object.entries(P).filter(([i,p])=>(p.name||"").toLowerCase().includes(q)).map(([i,p])=>{let c=+(p.costPrice??p.purchasePrice??0),s=+(p.sellingPrice??p.price??0),q=+(p.stock??p.quantity??0);return`<tr><td>${E(p.name)}</td><td>${E(p.category||"")}</td><td>${M(c)}</td><td>${M(s)}</td><td class="${q<=+(p.minStock??0)?"danger":""}">${q}</td><td>${M(c*q)}</td><td>${M(s*q)}</td><td class=green>${M((s-c)*q)}</td><td><button onclick="editP('${i}')">Edit</button> <button onclick="del('${i}')">Delete</button></td></tr>`}).join("")};
+function since(ms){let now=Date.now(),a={s:0,p:0};Object.values(S).forEach(x=>{if(now-x.createdAt<=ms){a.s+=+x.total||0;a.p+=+x.profit||0}});return a}function day(){let d=new Date();d.setHours(0,0,0,0);let a={s:0,p:0};Object.values(S).forEach(x=>{if(x.createdAt>=d.getTime()){a.s+=+x.total||0;a.p+=+x.profit||0}});return a}
+function render(){renderPOS();renderCart();renderInv();let ps=Object.values(P),q=0,c=0,s=0,l=0;ps.forEach(p=>{let n=+(p.stock??p.quantity??0),a=+(p.costPrice??p.purchasePrice??0),b=+(p.sellingPrice??p.price??0);q+=n;c+=n*a;s+=n*b;if(n<=+(p.minStock??0))l++});np.textContent=ps.length;nq.textContent=q;sc.textContent=M(c);ss.textContent=M(s);ep.textContent=M(s-c);low.textContent=l;let d=day();ts.textContent=M(d.s);tp.textContent=M(d.p);let w=since(6048e5),m=since(2592e6),y=since(31536e6);rd.textContent=M(d.s)+" / Profit "+M(d.p);rw.textContent=M(w.s)+" / Profit "+M(w.p);rm.textContent=M(m.s)+" / Profit "+M(m.p);ry.textContent=M(y.s)+" / Profit "+M(y.p);sb.innerHTML=Object.values(S).sort((a,b)=>b.createdAt-a.createdAt).map(x=>`<tr><td>${new Date(x.createdAt).toLocaleString()}</td><td>${E(x.invoice)}</td><td>${(x.items||[]).reduce((a,i)=>a+(+i.qty||0),0)}</td><td>${M(x.total)}</td><td>${M(x.cost)}</td><td class=green>${M(x.profit)}</td><td>${E(x.payment)}</td></tr>`).join("")}
+
+window.showInvoice=x=>{
+ window.lastInvoice=x;
+ let rows=(x.items||[]).map(i=>`<tr><td>${E(i.name)}</td><td style="text-align:center">${i.qty}</td><td style="text-align:right">${M(i.sellingPrice)}</td><td style="text-align:right">${M(i.sellingPrice*i.qty)}</td></tr>`).join("");
+ invoiceContent.innerHTML=`<div class="invoice-head">
+   <div class="receipt-title">SINDH MART</div>
+   <div>Har Ghar Ki Zaroorat, Ab Online</div>
+   <div class="receipt-meta">SALES INVOICE / CASH BILL</div>
+ </div>
+ <div class="receipt-meta">
+   <b>Invoice No:</b> ${E(x.invoice)}<br>
+   <b>Date:</b> ${new Date(x.createdAt).toLocaleString()}<br>
+   <b>Payment:</b> ${E(x.payment)}
+ </div>
+ <table class="invoice-table receipt-items">
+   <thead><tr><th style="text-align:left">ITEM</th><th>QTY</th><th style="text-align:right">PRICE</th><th style="text-align:right">AMOUNT</th></tr></thead>
+   <tbody>${rows}</tbody>
+ </table>
+ <div class="receipt-summary">
+   <div style="display:flex;justify-content:space-between"><span>Subtotal</span><b>${M(x.subtotal)}</b></div>
+   ${x.discount?`<div style="display:flex;justify-content:space-between"><span>Discount</span><b>- ${M(x.discount)}</b></div>`:""}
+   <div class="grand-total" style="display:flex;justify-content:space-between"><span>NET TOTAL</span><span>${M(x.total)}</span></div>
+ </div>
+ <div class="receipt-footer">Thank you for shopping with Sindh Mart<br>Please visit us again</div>`;
+ invoiceModal.style.display="block";
+};
+window.printInvoice=()=>window.print();
+window.closeInvoice=()=>{document.getElementById("invoiceModal").style.display="none"};
+window.showLastInvoice=()=>{
+ if(window.lastInvoice){ showInvoice(window.lastInvoice); return; }
+ let arr=Object.values(S||{}).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+ if(arr.length){ window.lastInvoice=arr[0]; showInvoice(arr[0]); return; }
+ alert("Abhi koi invoice nahi bani. Pehle POS sale complete karein.");
+};
+
+render();
+</script></body></html>
