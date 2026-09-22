@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#08633a">
+<title>Sindh Mart — Har Ghar Ki Zaroorat, Ab Online</title>
+<style>
+:root{
+  --green:#08633a;--green2:#0b7a48;--light:#f5f6f4;--card:#fff;
+  --text:#171a18;--muted:#70756f;--line:#e5e8e4;--yellow:#ffd21a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--light);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+body{padding-bottom:92px}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+.topbar{background:var(--green);color:#fff;position:sticky;top:0;z-index:30;box-shadow:0 2px 12px #0002}
+.topinner{max-width:1200px;margin:auto;min-height:92px;padding:14px 22px;display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:12px}
+.menuBtn{border:0;background:none;color:#fff;font-size:42px;line-height:1;padding:0}
+.brand{font-weight:900;font-size:27px;letter-spacing:.5px}
+.delivery{font-weight:700;font-size:15px;margin-top:3px}
+.accountBtn{background:transparent;border:1.5px solid #ffffff99;color:#fff;border-radius:28px;padding:11px 20px;font-weight:800}
+.searchWrap{background:#fff;padding:18px 22px;position:relative;z-index:20}
+.search{width:100%;max-width:1150px;display:block;margin:auto;border:0;outline:0;background:#ecefed;border-radius:34px;padding:16px 52px 16px 20px;font-size:20px}
+.searchIcon{position:absolute;right:max(38px,calc((100% - 1150px)/2 + 16px));top:31px;font-size:25px;color:#333}
+main{max-width:1200px;margin:auto;padding:0 20px}
+.hero{margin-top:18px}
+.videoBox,.slide{height:270px;border-radius:0;background:#fff;color:inherit;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;position:relative}
+.videoBox .promoGif{width:100%;height:100%;object-fit:cover;display:none}
+.videoText{display:none!important}
+.slider{margin-top:18px;border-radius:0;overflow:hidden;background:#fff;box-shadow:none}
+.slide{border-radius:0;display:none;padding:0;text-align:left;justify-content:flex-start}
+.slide.active{display:flex}
+.slide h1,.slide p{display:none}
+.dots{height:54px;display:flex;align-items:center;justify-content:center;gap:14px}
+.dot{width:15px;height:15px;border-radius:50%;background:#bbb}.dot.active{background:var(--green)}
+.section{margin-top:30px}
+.section h2{font-size:30px;margin:0 0 15px}
+.hscroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:7px;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
+.categoryCard{border:0;color:inherit;font:inherit;cursor:pointer;flex:0 0 185px;background:#fff;border-radius:18px;padding:12px;text-align:center;box-shadow:0 2px 10px #0000000b}
+.categoryCard img{width:100%;height:105px;object-fit:contain;background:#eff8f2;border-radius:13px}
+.categoryCard .catIcon{height:105px;border-radius:13px;background:#eff8f2;display:flex;align-items:center;justify-content:center;font-size:45px}
+.categoryCard b{display:block;margin:10px 4px 2px;font-size:16px}
+.catTabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:8px}
+.catTabs::-webkit-scrollbar{display:none}
+.catTab{border:1px solid #ddd;background:#fff;border-radius:22px;padding:9px 15px;white-space:nowrap;font-weight:700}
+.catTab.active{background:var(--green);color:#fff;border-color:var(--green)}
+.productsGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.productsRow{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none}
+.productsRow::-webkit-scrollbar{display:none}
+.productCard{background:#fff;border-radius:20px;padding:11px;min-width:0;box-shadow:0 2px 12px #0000000b;position:relative}
+.productsRow .productCard{flex:0 0 245px}
+.productImg{width:100%;height:170px;object-fit:contain;border-radius:14px;background:#fafbfa}
+.discount{position:absolute;top:10px;left:10px;background:#ef3d3d;color:#fff;border-radius:13px;padding:5px 9px;font-size:12px;font-weight:800}
+.productName{font-size:16px;line-height:1.25;min-height:42px;margin-top:9px}
+.old{color:#888;text-decoration:line-through;font-size:13px;margin-top:4px}
+.price{font-size:19px;font-weight:900;margin-top:3px}
+.stock{font-size:12px;margin:6px 0;color:#117342;font-weight:700}
+.add{width:100%;border:0;background:var(--green);color:#fff;border-radius:13px;padding:11px;font-weight:800}
+.add:disabled{background:#bbb;cursor:not-allowed}
+.empty,.loading{padding:18px;color:var(--muted);background:#fff;border-radius:14px}
+.bottomCart{position:fixed;left:14px;right:14px;bottom:12px;z-index:50;display:none}
+.bottomCart button{width:100%;background:var(--yellow);border:0;border-radius:32px;padding:16px 20px;font-size:18px;font-weight:900;box-shadow:0 5px 25px #0003;display:flex;justify-content:space-between}
+.drawerShade,.modalShade{position:fixed;inset:0;background:#0007;z-index:80;display:none}
+.drawer{position:fixed;left:0;top:0;bottom:0;width:min(390px,88vw);background:#fff;z-index:90;transform:translateX(-105%);transition:.25s;overflow:auto}
+.drawer.open{transform:translateX(0)}
+.drawerHead{background:var(--green);padding:22px 20px 20px;color:#fff}
+.drawerLogo{width:150px;height:auto;display:block;margin:0 0 10px}
+.drawerTag{font-size:16px;font-weight:700}
+.drawerItem{padding:18px 22px;border-bottom:1px solid var(--line);font-size:17px;font-weight:800;background:#fff;text-align:left;border-left:0;border-right:0;border-top:0;width:100%}
+.modalShade{z-index:100;overflow:auto;padding:25px 14px}
+.modal{max-width:520px;margin:25px auto;background:#fff;border-radius:22px;padding:22px;box-shadow:0 10px 40px #0005}
+.modal h2{margin:0 0 16px}.field{margin:10px 0}.field label{display:block;font-weight:700;font-size:13px;margin-bottom:5px}.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #d8ddd9;border-radius:12px;outline:0}.actions{display:flex;gap:10px;margin-top:16px}.primary{flex:1;border:0;background:var(--green);color:#fff;border-radius:12px;padding:12px;font-weight:800}.secondary{flex:1;border:1px solid #ddd;background:#fff;border-radius:12px;padding:12px;font-weight:800}
+.bill{border:1px solid var(--line);border-radius:15px;padding:12px;margin:12px 0}.billLine{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid #eee}.billLine:last-child{border-bottom:0}.total{font-size:21px;font-weight:900;display:flex;justify-content:space-between;margin-top:10px}
+.order{border:1px solid var(--line);border-radius:15px;padding:14px;margin:10px 0}.orderTop{display:flex;justify-content:space-between;gap:8px}.status{font-size:12px;font-weight:900;padding:5px 9px;border-radius:12px;background:#eaf5ef;color:#08633a}.orderItems{font-size:13px;color:#555;margin-top:8px}.notice{padding:11px;border-radius:12px;background:#fff5d6;margin:10px 0;font-size:13px}
+.footer{max-width:1200px;margin:40px auto 0;padding:20px;color:#777;text-align:center;font-size:13px}
+@media(max-width:850px){.productsGrid{grid-template-columns:repeat(3,1fr)}.productImg{height:150px}}
+@media(max-width:650px){
+  .topinner{min-height:110px;padding:10px 18px;grid-template-columns:54px 1fr auto;gap:8px}
+  .brand{font-size:23px}.delivery{font-size:14px;line-height:1.25}.accountBtn{padding:10px 15px}
+  .searchWrap{padding:16px 20px}.search{font-size:18px;padding:15px 48px 15px 18px}.searchIcon{right:37px;top:28px}
+  main{padding:0 14px}.videoBox,.slide{height:205px;border-radius:22px}.videoText h2{font-size:23px}.videoText p{font-size:14px}
+  .slide{padding:24px}.slide h1{font-size:30px}.slide p{font-size:16px}
+  .section{margin-top:24px}.section h2{font-size:27px}
+  .categoryCard{flex-basis:150px}.categoryCard img,.categoryCard .catIcon{height:88px}.productsGrid{grid-template-columns:repeat(2,1fr);gap:10px}.productImg{height:125px}.productCard{border-radius:17px;padding:9px}.productName{font-size:14px;min-height:38px}.price{font-size:17px}.add{padding:10px 7px;font-size:13px}
+  .productsRow .productCard{flex-basis:190px}
+  .drawer{width:86vw}.drawerLogo{width:125px}
+}
+
+/* Clean ad areas: no placeholder text, borders or overlays */
+.videoBox,.slider{background:#fff!important;border:0!important;box-shadow:none!important}
+.dynamicSlideImg{width:100%;height:100%;object-fit:cover;display:block}
+.dynamicSlideShade,.dynamicSlideContent{display:none!important}
+.bannerLink{position:absolute;inset:0;z-index:2}
+
+@media(max-width:700px){.videoBox,.slider{background:#fff!important;border:0!important;box-shadow:none!important}.videoBox{border-radius:0!important}.slider{border-radius:0!important}}
+</style>
+
+<style id="final-green-cart-override">
+/* Sindh Mart final: bottom cart bar uses the website green */
+#bottomCart, .bottom-cart, .cart-bar, .sticky-cart, .floating-cart,
+#cartBar, .cartFooter, .cart-footer {
+  background: #056b3a !important;
+  color: #fff !important;
+}
+#bottomCart button, .bottom-cart button, .cart-bar button, .sticky-cart button,
+#cartBar button, .cartFooter button, .cart-footer button {
+  background: #056b3a !important;
+  color: #fff !important;
+}
+</style>
+
+
+<style id="sindh-mart-compact-final">
+/* Final compact mobile layout — preserves rounded green cart */
+@media(max-width:850px){.productsGrid{grid-template-columns:repeat(3,1fr);gap:9px}.productImg{height:120px}.productCard{padding:8px;border-radius:15px}.productName{font-size:13px;min-height:34px}.price{font-size:16px}.stock{font-size:11px;margin:4px 0}.add{padding:8px 5px;font-size:12px;border-radius:11px}}
+@media(max-width:650px){
+ .topinner{min-height:78px;padding:7px 12px;grid-template-columns:40px 1fr auto;gap:6px}
+ .menuBtn{font-size:30px}.brand{font-size:19px}.delivery{font-size:11px;margin-top:2px}.accountBtn{padding:7px 10px;font-size:12px;border-radius:20px}
+ .searchWrap{padding:10px 12px}.search{font-size:14px;padding:11px 38px 11px 14px}.searchIcon{right:25px;top:20px;font-size:20px}
+ main{padding:0 10px}.hero{margin-top:10px}.videoBox,.slide{height:155px;border-radius:17px}.slider{margin-top:10px;border-radius:17px}.slide{padding:18px;border-radius:17px 17px 0 0}.slide h1{font-size:22px;margin-bottom:7px}.slide p{font-size:13px}.dots{height:34px;gap:8px}.dot{width:9px;height:9px}
+ .section{margin-top:18px}.section h2{font-size:21px;margin-bottom:9px}.categoryCard{flex-basis:115px;padding:8px;border-radius:14px}.categoryCard img,.categoryCard .catIcon{height:68px}.categoryCard .catIcon{font-size:32px}.categoryCard b{font-size:13px;margin:7px 2px 1px}.catTab{padding:7px 11px;font-size:12px}
+ .productsGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.productImg{height:105px;border-radius:11px}.productCard{padding:7px;border-radius:14px}.productName{font-size:12px;line-height:1.2;min-height:30px;margin-top:6px}.old{font-size:11px;margin-top:2px}.price{font-size:15px;margin-top:2px}.stock{font-size:10px;margin:3px 0}.add{padding:8px 3px;font-size:11px;border-radius:9px}
+ .productsRow{gap:9px}.productsRow .productCard{flex:0 0 145px}.bottomCart{left:10px;right:10px;bottom:9px}.bottomCart button{border-radius:32px;padding:11px 14px;font-size:14px}
+}
+.cartQtyBox{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}.qtyBtn{width:30px;height:30px;border:0;border-radius:50%;background:#08633a;color:#fff;font-size:20px;font-weight:900;line-height:30px;padding:0}.qtyNum{font-weight:900;min-width:18px;text-align:center}
+.dynamicSlideImg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.dynamicSlideShade{position:absolute;inset:0;background:linear-gradient(90deg,#0008,#0001)}.dynamicSlideContent{position:relative;z-index:2;color:#fff}.bannerLink{position:absolute;inset:0;z-index:3}
+<style id="search-only-mode">
+/* Search mode: show search results first and hide homepage sections only while searching. */
+.searchMode main > *:not(#allProductsSection),
+.searchMode #catTabs {
+  display:none !important;
+}
+.searchMode #allProductsSection {
+  margin-top:18px;
+}
+.searchMode #productsHeading {
+  font-size:21px;
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topinner">
+    <button class="menuBtn" onclick="openDrawer()" aria-label="Menu">☰</button>
+    <div>
+      <div class="brand">SINDH MART</div>
+      <div class="delivery">Delivery available only for Sukkur &amp; Rohri city</div>
+    </div>
+    <button class="accountBtn" onclick="openAccount()">Account</button>
+  </div>
+</header>
+
+<div class="searchWrap">
+  <input id="search" class="search" placeholder="Search products..." autocomplete="off">
+  <span class="searchIcon">⌕</span>
+</div>
+
+<main>
+  <section class="hero">
+    <div class="videoBox" id="videoBox">
+      <img id="promoGif" class="promoGif" src="" alt="">
+    </div>
+
+    <div class="slider">
+      <div class="slide active"><div><h1>Welcome to Sindh Mart</h1><p>Fresh groceries delivered in Sukkur &amp; Rohri.</p></div></div>
+      <div class="slide"><div><h1>Daily Grocery Deals</h1><p>Quality products at your doorstep.</p></div></div>
+      <div class="slide"><div><h1>Fresh • Quality • Trust</h1><p>Har Ghar Ki Zaroorat, Ab Online.</p></div></div>
+      <div class="dots"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
+    </div>
+  </section>
+
+  <section class="section" id="newSection">
+    <h2>New Arrivals</h2>
+    <div id="newProducts" class="productsRow"><div class="loading">Loading products...</div></div>
+  </section>
+
+  <section class="section" id="topSection">
+    <h2>Top Picks</h2>
+    <div id="topProducts" class="productsRow"><div class="loading">Loading products...</div></div>
+  </section>
+
+  <section class="section" id="categoriesSection">
+    <h2>Categories</h2>
+    <div id="catCards" class="hscroll"><div class="loading">Loading categories...</div></div>
+  </section>
+
+  <section class="section" id="allProductsSection">
+    <h2 id="productsHeading">All Products</h2>
+    <div id="catTabs" class="catTabs"></div>
+    <div id="products" class="productsGrid"><div class="loading">Loading products...</div></div>
+  </section>
+
+  <div class="footer">© Sindh Mart — Har Ghar Ki Zaroorat, Ab Online</div>
+</main>
+
+<div class="bottomCart" id="bottomCart">
+  <button onclick="openCart()"><span id="cartQty">0 items</span><span>View Cart</span><span>Rs. <span id="cartTotal">0</span></span></button>
+</div>
+
+<div class="drawerShade" id="drawerShade" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawerHead">
+    <img class="drawerLogo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQ4AAABaCAYAAABJ2bjwAAABBmlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGCSYAACJgEGhty8kqIgdyeFiMgoBQYkkJhcXMCAGzAyMHy7BiIZGC7r4lGHC3CmpBYnA+kPQFxSBLQcaGQKkC2SDmFXgNhJEHYPiF0UEuQMZC8AsjXSkdhJSOzykoISIPsESH1yQRGIfQfItsnNKU1GuJuBJzUvNBhIRwCxDEMxQxCDO4MTGX7ACxDhmb+IgcHiKwMD8wSEWNJMBobtrQwMErcQYipAP/C3MDBsO1+QWJQIFmIBYqa0NAaGT8sZGHgjGRiELzAwcEVj2oGICxx+VQD71Z0hHwjTGXIYUoEingx5DMkMekCWEYMBgyGDGQBMpUCRBqmilgAACJVJREFUeJzt3dmrVWUcxvHv1swww4FSjCg0MSMLbBSjlINBBFFBFlQ3QtFF0V9Q3XTTRTdBdxkVRJBJA0QRjRbRIFYXRRhaNKBEkYUZVnR2F+962+us845rOue4nw9s1t7vu6ZzsX7nnddgOBwOERHJMG+mb0BE5h4FDhHJpsAhItkUOEQkmwKHiGRT4BCRbAocIpJNgUNEsrUZOHYCa4GBPvroM2s/G4FXaWjQwsjRDcCXTW9ERHq3CjhU58AmJY77MBFMQUNkbjqMeYY35B5Yp8TxG7AC+Cf3YiIyq32KqcpE5ZY4PgGWoaAhciK6GHguZcfcEseg3v1kWwzMB1YCvxZpi4Dve7q+yDj7GLg8tMNJGSe7ptm9BK0CTgcuAp6J7Hs9cBx4s8P7ERlnVwDBAkVqiWMncFcrtzRyFrANeLKUdi+mhLEQ+AP4F1PqOAqcVuRVi1Lbgd0t35vIuLsKeM+XmRo4TgH+au2WYD3wVen31mK7J/H4xcAm4I1SWl/VKJFx4Y0NKVWVh2kvaCzGlB6stcDBGuf5A1NVGWDaPo4x+iMVQETacRvwrCsjpcSxHDjS0o2Ur9X2A34P8FhH5xYZR/MwzQXTpASOth5Ce52T6bY7VyUPkfY440NsHMfzLV98QPdjQGzA0CLMIs094EqMBY467Q9VTUoANxTHhz4u9lq31LimiIw4Y0AscHzX8KLnFts7axw7BF7CP8uvvJ8vgCSNghMRrx9dibHAcbzhRQ8U2ycyj0sppVTzVnjyVWURqe+oKzEWOE5ucMG6VZS6Q+BdbSdqIBVpxtmrEgscc2GFMBscfg/so1KHSD3OzozYALDJmhe7oNi6/uN30V0aq9IocIjU44wBXZUovujovCLSrwWuxJmsiqxL2KfNkoJKHSIt6TJwhKopAPsTjwt1tza5FxGpKWc9jlR1HvLyMb51PzSUXGSWaKvEERvJ6TPhOMbOerVOLX5fW7mWiMyQLkoc1pB46eCtQJ7tDTkWOD+YwPJn3q2JSBNtlTh8Q8KrJYPbEs6VW3opr8UhIj3ossRhbcYMIlmAZ1GQio3AZ5W0DZh1QbxLmZFWwhGRFvQROD7I3L8aNGA0LsQGhhswE+CqFDxEetBXd6yrGnNl6ff8UvqlmDVO12CWFrzece6XmdpgWqZqi0h7nHNV+ihx+Hxe+l4e1rqv2H5bbENrgryOhpSL9K7rkaM7iq1r8Z1jnnTfYj2hKsgZkfsYEnnBjIik6zpwPFX6fgawFDivlHYmpkqyktEU/vlF2prKviG/JOyzN/FcIhLRZ1XFPtx2+vtS3FPhJxlVU9qwqMVziQj9THK71ZE2wNPo0oFjqKdFpFV9lDjeLrapDZiu/fTgi8wifQSO1aXv1UWGXTNhXWl1aVyHSAf6qKrsJW2o+QTtBI3ycHcFDZEO9NU4atszqoEgJTCkPPx1zisiNfVR4lhC/febrEzYp/o+2onSdxHpQB8lDlva6OJBLgeNUxlVTxQ0RDrUR4nDLq8ee5Vj6isetzjyBqjbVaQ3fZQ4/mJ6bwqltHmY0aI2wKwGvmE0ByXUXrEcOOI4d4iCi0hDfU9ycz3Yk0yd5PZNYN+qXyP5ChIiHej79Qi5E83qtleonUOkQ7HA4XwZSwN7getIe5m0az0P19ocADeW9lHAEOlYrKrSRYnktYR9fA//K4E8EelJLHD8lHCOzZjGzX1otXGRsRALHKEp6RPAV5g1NY5jukN3MHUNDoBNwGJM78e+St4WYI/j3Dcx6mV5n6nT728GPgHOx1SlXon8DVswSxHOAw4zdeWxbcV1JovriEiCWOA4JZD3FqbasLv4bbtPn6rs92Hpe7masQJ415EOppt1Z/H9HEaBYx3wfPF9O7AQOBsT4FbjrgYtB14ovp9fyXvDc28iEjAYDoehbk9XCQL8y/ktYnp15SzgB8/+1UFcruv4jklND+UtYvTCJwUOkenWY2oWU8QaP0/zpNs1PqsDtEJtHK4FfcpcAWyHI813Ht9LoEJsVcz3vloRcYgFjn886b8wdUxGaITn38V2viffNarUetJz7bbYwLimxXOKnPCadLfuJW39DBt8QksFhoJHVZtriNqZtLERqCJS0sYAsOqgq+qDf2axjU2tTw0ebT7kHxXbvtY/FTkhxAKH7yF1Pdi+qsjxYhtr44C8kkfVpmLrerubj22TCfUeiUhFLHAsD+Str/y2E9Wq1ZejWXcU791Y60m33b6vZ1zL3lvKy7BFpFC3xDHAdNGUSwW+EoIdfZqzCpgNHnc68p4uXa/82Uq4K9bl54x7EpFCbACYrzsWpj+kvpJCyoS2nLzc8RZ1ry8iHrESh6/dQkTGWN/rcYCpOmyu/HbtE0ov593kSReR5pw9q7HAkbLKeB0fFNu67025GzN5DeDFIu1SVPUQaZtzcGSsjeOyDm7E2oaZwPZdJX0C03NywHOcb96JGjpF2jfhSoxNcoP2/4sPGQUGO6M2NH6jmncesN9xX74p+iJSnzM+pLRxLGn5RjYCB4n3drjy7wC+xt1Nq6Ah0pOUEsdDwIN93IyIzCq3A8+4MlICB/TT6LiEqSt9taW8RohrvRARcfPGhtTu2EczL7awdNEhsKz0/RLHMUuA3yrnCJ0f3Pc+rGxhtFDPELPC+gWBc4uIsSWUmRo47gMuTNz3Gszb2+xks4sYvW1tq+eY1aSXauz8mUlHnl0j5F7PsbuBLxOvIzLO3g1lplZV/t+/2b2IyBywB7g6tEPuyNF36t+LiMwBjxMJGpBf4gDzioMrMdURETlxvEbiejZ1Aod1HWlvZROR2W0dZlBlsiaT3F4FdgGrGpxDRGbWLjKDBjSfHbsdOITp6nwE83IkEZm9FgD3M5pNvr3OSZpUVURkTM3EehwiMscpcIhINgUOEcmmwCEi2RQ4RCSbAoeIZPsP5+DAtUXT680AAAAASUVORK5CYII=" alt="Sindh Mart">
+    <div class="drawerTag">Har Ghar Ki Zaroorat, Ab Online</div>
+  </div>
+  <button class="drawerItem" onclick="goHome()">🏠 Home</button>
+  <button class="drawerItem" onclick="openAccount();closeDrawer()">👤 My Profile</button>
+  <button class="drawerItem" onclick="openOrders();closeDrawer()">📦 My Orders</button>
+  <button class="drawerItem" onclick="openCart();closeDrawer()">🛒 Cart</button>
+  <button class="drawerItem" onclick="showPolicy('privacy');closeDrawer()">🔒 Privacy Policy</button>
+  <button class="drawerItem" onclick="showPolicy('terms');closeDrawer()">📄 Terms &amp; Conditions</button>
+  <button class="drawerItem" onclick="openWhatsApp();closeDrawer()" style="color:#08733f">💬 Help Center / WhatsApp</button>
+</aside>
+
+<div class="modalShade" id="modalShade" onclick="closeModal(event)">
+  <div class="modal" id="modal" onclick="event.stopPropagation()"></div>
+</div>
+
+<script>
+const DB_URL="https://sindh-mart-default-rtdb.firebaseio.com";
+const API_KEY="AIzaSyDWZ45RK76BS_IbPRJZ0XLQESMGEcQQELE";
+const WA="923051501651";
+
+let products=[], categories={}, cart=JSON.parse(localStorage.getItem("sindh_cart")||"[]");
+let currentCat="all", currentUser=JSON.parse(localStorage.getItem("sindh_user")||"null"), idToken=localStorage.getItem("sindh_token")||"";
+const $=id=>document.getElementById(id);
+
+function saveCart(){localStorage.setItem("sindh_cart",JSON.stringify(cart));renderCartBar();renderAll();renderFeatured()}
+function money(n){return Number(n||0).toLocaleString("en-PK")}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function normalizeCatName(v){return String(v||"").replaceAll("_"," ").replace(/\b\w/g,x=>x.toUpperCase())}
+
+async function db(path,opts={}){
+  const method=(opts.method||"GET").toUpperCase();
+  const needsAuth=path.startsWith("customers/") || path==="customers" || path.startsWith("orders") || method!=="GET";
+  const basePath=path.split("?")[0];
+  const query=path.includes("?") ? "?"+path.split("?").slice(1).join("?") : "";
+  const authQ=needsAuth && idToken ? (query ? "&" : "?")+"auth="+encodeURIComponent(idToken) : "";
+  const r=await fetch(DB_URL+"/"+basePath+".json"+query+authQ,{cache:"no-store",...opts,headers:{"Content-Type":"application/json",...(opts.headers||{})}});
+  if(!r.ok) throw new Error("Firebase "+r.status);
+  return r.status===204?null:r.json();
+}
+function safeUrl(v){const s=String(v||"").trim();if(/^data:image\/(png|jpe?g|webp|gif);base64,/i.test(s))return s;try{const u=new URL(s,location.href);return /^https?:$/.test(u.protocol)?u.href:""}catch{return ""}}
+function renderAds(data){
+  const ads=Object.entries(data||{}).map(([id,a])=>({id,...a}))
+    .filter(a=>a.active!==false)
+    .sort((a,b)=>Number(a.order||0)-Number(b.order||0));
+
+  const banners=ads.filter(a=>a.type==="banner");
+  const gifs=ads.filter(a=>a.type==="gif" || a.type==="video");
+
+  const slider=document.querySelector(".slider");
+  if(banners.length){
+    slider.innerHTML=banners.map((a,i)=>{
+      const img=safeUrl(a.image||a.url);
+      const link=safeUrl(a.link);
+      return `<div class="slide ${i===0?"active":""}">
+        ${link?`<a class="bannerLink" href="${esc(link)}" target="_blank" rel="noopener"></a>`:""}
+        ${img?`<img class="dynamicSlideImg" src="${esc(img)}" alt="">`:""}
+      </div>`;
+    }).join("") + (banners.length>1 ? `<div class="dots">${banners.map((_,i)=>`<span class="dot ${i===0?"active":""}"></span>`).join("")}</div>` : "");
+    startSlider();
+  }else{
+    slider.innerHTML="";
+  }
+
+  const v=gifs[0];
+  const el=$("promoGif");
+  const vu=safeUrl(v?.url||v?.image);
+  if(vu){
+    el.src=vu;
+    el.style.display="block";
+  }else{
+    el.removeAttribute("src");
+    el.style.display="none";
+  }
+}
+function startSlider(){clearInterval(window.sindhSliderTimer);window.sindhSliderTimer=setInterval(()=>{const slides=document.querySelectorAll(".slider .slide"),dots=document.querySelectorAll(".slider .dot");if(slides.length<2)return;let i=[...slides].findIndex(x=>x.classList.contains("active"));if(i<0)i=0;slides[i].classList.remove("active");if(dots[i])dots[i].classList.remove("active");i=(i+1)%slides.length;slides[i].classList.add("active");if(dots[i])dots[i].classList.add("active")},4000)}
+async function loadData(){
+  try{
+    const [ps,cs,ads]=await Promise.all([db("products"),db("categories"),db("ads").catch(()=>({}))]);
+    products=Object.entries(ps||{}).map(([id,p])=>({id,...p})).filter(p=>p);
+    categories=cs||{};
+    renderAds(ads||{});
+    renderCategoryCards();renderTabs();renderAll();renderFeatured();
+  }catch(e){
+    console.error(e);
+    $("products").innerHTML='<div class="empty">Products are temporarily unavailable. Please check your internet connection and try again.</div>';
+    $("newProducts").innerHTML='<div class="empty">Products are temporarily unavailable.</div>';
+    $("topProducts").innerHTML='<div class="empty">Products are temporarily unavailable.</div>';
+    $("catCards").innerHTML='<div class="empty">Categories are temporarily unavailable.</div>';
+  }
+}
+function catId(p){return String(p.categoryId||p.category||"").toLowerCase()}
+function catName(id){
+  const c=categories[id];
+  if(typeof c==="string") return c;
+  return c?.name||normalizeCatName(id);
+}
+function isAvailable(p){return p.available!==false && p.active!==false && Number(p.stock??1)>0}
+function productCard(p){
+  const avail=isAvailable(p), price=Number(p.price||0), old=Number(p.oldPrice||p.originalPrice||0);
+  const img=p.imageUrl||p.image||"";
+  return `<div class="productCard">
+    ${old>price?`<div class="discount">${Math.round((1-price/old)*100)}% off</div>`:""}
+    ${img?`<img class="productImg" src="${esc(img)}" onerror="this.style.display='none'">`:`<div class="productImg"></div>`}
+    <div class="productName">${esc(p.name||"Product")}</div>
+    ${old>price?`<div class="old">Rs. ${money(old)}</div>`:""}
+    <div class="price">Rs. ${money(price)}</div>
+    <div class="stock">${avail?"✓ Available":"✕ Out of Stock"}</div>
+    ${avail ? (cart.find(x=>x.id===p.id)?.qty ? `<div class="cartQtyBox"><button class="qtyBtn" onclick="changeQty('${p.id}',-1)">−</button><span class="qtyNum">${cart.find(x=>x.id===p.id).qty}</span><button class="qtyBtn" onclick="changeQty('${p.id}',1)">+</button></div>` : `<button class="add" onclick="addCart('${p.id}')">Add to Cart</button>`) : `<button class="add" disabled>Out of Stock</button>`}
+  </div>`;
+}
+function renderAll(){
+  const q=$("search").value.trim().toLowerCase();
+
+  // Search mode: show ONLY search results at the top.
+  const searchMode=!!q;
+  document.body.classList.toggle("searchMode",searchMode);
+
+  // Use inline display as well as the CSS class so this works reliably
+  // even when the page is opened as a local content:// file on Android.
+  const allSection=$("allProductsSection");
+  if(allSection){
+    allSection.style.display="";
+    allSection.style.marginTop=searchMode ? "18px" : "";
+  }
+  document.querySelectorAll("main > *:not(#allProductsSection)").forEach(el=>{
+    el.style.display=searchMode ? "none" : "";
+  });
+  const tabs=$("catTabs");
+  if(tabs) tabs.style.display=searchMode ? "none" : "";
+
+  if(searchMode) currentCat="all";
+
+  let list=products.filter(p=>{
+    if(currentCat!=="all" && catId(p)!==currentCat) return false;
+    return !q || String(p.name||"").toLowerCase().includes(q) || catName(catId(p)).toLowerCase().includes(q);
+  });
+
+  $("products").innerHTML=list.length?list.map(productCard).join(""):'<div class="empty">No products found.</div>';
+  $("productsHeading").textContent=searchMode ? "Search Results" : "All Products";
+}
+function renderFeatured(){
+  const avail=products.filter(isAvailable);
+  const newer=avail.filter(p=>p.newArrival===true || p.newArrival==="true" || p.tag==="New Arrival").slice(0,8);
+  const top=avail.filter(p=>p.topPick===true || p.topPick==="true" || p.featured===true || p.tag==="Top Pick").slice(0,8);
+  $("newProducts").innerHTML=(newer.length?newer:avail.slice(0,8)).map(productCard).join("")||'<div class="empty">No products available.</div>';
+  $("topProducts").innerHTML=(top.length?top:avail.slice(0,8)).map(productCard).join("")||'<div class="empty">No products available.</div>';
+}
+function renderCategoryCards(){
+  const entries=Object.entries(categories);
+  $("catCards").innerHTML=entries.length?entries.map(([id,c])=>{
+    const name=typeof c==="string"?c:(c?.name||normalizeCatName(id)), img=typeof c==="object"?(c?.image||c?.imageUrl||""):"";
+    return `<button class="categoryCard" onclick="selectCat('${esc(id)}')">${img?`<img src="${esc(img)}" alt="${esc(name)}">`:`<div class="catIcon">🛒</div>`}<b>${esc(name)}</b></button>`;
+  }).join(""):'<div class="empty">No categories found.</div>';
+}
+function renderTabs(){
+  $("catTabs").innerHTML='<button class="catTab active" id="cat-all" onclick="selectCat(\'all\')">All</button>'+
+    Object.entries(categories).map(([id,c])=>`<button class="catTab" id="cat-${esc(id)}" onclick="selectCat('${esc(id)}')">${esc(typeof c==="string"?c:(c?.name||normalizeCatName(id)))}</button>`).join("");
+}
+function selectCat(id){
+  currentCat=id;
+  document.querySelectorAll(".catTab").forEach(x=>x.classList.remove("active"));
+  const el=$("cat-"+id);if(el)el.classList.add("active");
+  renderAll();document.querySelector("#products").scrollIntoView({behavior:"smooth",block:"start"});
+}
+$("search").addEventListener("input",renderAll);
+
+function addCart(id){
+  const p=products.find(x=>x.id===id);
+  if(!p||!isAvailable(p)) return alert("This product is currently unavailable.");
+  const found=cart.find(x=>x.id===id);
+  if(found) found.qty++;
+  else cart.push({id:p.id,name:p.name,price:Number(p.price||0),image:p.imageUrl||p.image||"",qty:1});
+  saveCart();
+}
+function changeQty(id,d){
+  const x=cart.find(a=>a.id===id);if(!x)return;
+  x.qty+=d;if(x.qty<=0)cart=cart.filter(a=>a.id!==id);saveCart();
+}
+function cartTotal(){return cart.reduce((s,x)=>s+Number(x.price)*Number(x.qty),0)}
+function renderCartBar(){
+  const qty=cart.reduce((s,x)=>s+x.qty,0), total=cartTotal();
+  $("bottomCart").style.display=qty?"block":"none";$("cartQty").textContent=qty+" item"+(qty===1?"":"s");$("cartTotal").textContent=money(total);
+}
+function openCart(){
+  const items=cart.map(x=>`<div class="billLine"><span>${esc(x.name)} × ${x.qty}</span><span style="display:flex;align-items:center;gap:6px"><button class="qtyBtn" onclick="changeQty('${x.id}',-1);openCart()">−</button><b>${x.qty}</b><button class="qtyBtn" onclick="changeQty('${x.id}',1);openCart()">+</button><b>Rs. ${money(x.price*x.qty)}</b></span></div>`).join("");
+  openModal(`<h2>🛒 Your Cart</h2>${cart.length?`<div class="bill">${items}<div class="total"><span>Total</span><span>Rs. ${money(cartTotal())}</span></div></div><div class="actions"><button class="secondary" onclick="closeModal()">Continue Shopping</button><button class="primary" onclick="startCheckout()">Checkout</button></div>`:'<div class="empty">Your cart is empty.</div>'}`);
+}
+function startCheckout(){
+  if(!cart.length)return;
+  if(cartTotal()<500){openModal(`<h2>Minimum Order Required</h2><p>Your order total must be at least <b>Rs. 500</b> to proceed with checkout.</p><div class="actions"><button class="primary" onclick="closeModal()">Continue Shopping</button></div>`);return}
+  if(!currentUser){openAccount("checkout");return}
+  openCheckout();
+}
+function openCheckout(){
+  const u=currentUser||{};
+  const rows=cart.map(x=>`<div class="billLine"><span>${esc(x.name)} × ${x.qty}</span><b>Rs. ${money(x.price*x.qty)}</b></div>`).join("");
+  openModal(`<h2>Checkout</h2><div class="bill">${rows}<div class="total"><span>Total Payment</span><span>Rs. ${money(cartTotal())}</span></div></div>
+  <div class="field"><label>Name</label><input id="coName" value="${esc(u.name||"")}"></div>
+  <div class="field"><label>Address</label><textarea id="coAddress" rows="3" placeholder="Complete delivery address"></textarea></div>
+  <div class="field"><label>Phone</label><input id="coPhone" value="${esc(u.phone||"")}" inputmode="tel"></div>
+  <div class="field"><label>Email</label><input id="coEmail" value="${esc(u.email||"")}" type="email"></div>
+  <div class="notice">Payment method: Cash on Delivery. Minimum order: Rs. 500.</div>
+  <div class="actions"><button class="secondary" onclick="openCart()">Back</button><button class="primary" onclick="placeOrder()">Place Order</button></div>`);
+}
+async function placeOrder(){
+  const name=$("coName").value.trim(),address=$("coAddress").value.trim(),phone=$("coPhone").value.trim(),email=$("coEmail").value.trim();
+  if(!name||!address||!phone||!email)return openModal(`<h2>Missing Information</h2><p>Please complete your name, delivery address, phone number, and email before placing the order.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+  if(cartTotal()<500)return openModal(`<h2>Minimum Order Required</h2><p>Your order total must be at least <b>Rs. 500</b> to place an order.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+  const code="SM-"+new Date().toISOString().slice(0,10).replaceAll("-","")+"-"+Math.random().toString(36).slice(2,7).toUpperCase();
+  const order={orderCode:code,customerId:currentUser?.uid||"",customer:{name,address,phone,email},items:cart.map(x=>({productId:x.id,name:x.name,price:x.price,quantity:x.qty,subtotal:x.price*x.qty})),total:cartTotal(),paymentMethod:"Cash on Delivery",status:"Pending",createdAt:Date.now()};
+  try{
+    // The order write is the actual checkout operation.
+    // Customer profile sync is optional and must never turn a successful order into a false error.
+    await db("orders", {method:"POST",body:JSON.stringify(order)});
+    if(currentUser?.uid){
+      try{
+        await db("customers/"+currentUser.uid,{method:"PATCH",body:JSON.stringify({uid:currentUser.uid,name,phone,email,address,lastOrderAt:Date.now()})});
+      }catch(profileErr){
+        console.warn("Customer profile sync skipped:",profileErr);
+      }
+    }
+    cart=[];saveCart();
+    openModal(`<h2>✅ Order Placed</h2><p>Your order code is <b>${code}</b>.</p><p>Keep this order code for your records and order tracking.</p><div class="actions"><button class="primary" onclick="closeModal()">Continue Shopping</button><button class="secondary" onclick="openOrders()">My Orders</button></div>`);
+  }catch(e){console.error(e);openModal(`<h2>Order Could Not Be Placed</h2><p>We could not place your order right now. Please check your internet connection and try again.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);} 
+}
+
+function openAccount(after){
+  if(currentUser){
+    openModal(`<h2>👤 My Account</h2><div class="notice">You are already signed in to your Sindh Mart account.</div><div class="bill"><div><b>Name:</b> ${esc(currentUser.name||"-")}</div><div style="margin-top:8px"><b>Email:</b> ${esc(currentUser.email||"-")}</div><div style="margin-top:8px"><b>Phone:</b> ${esc(currentUser.phone||"-")}</div></div><div class="actions"><button class="primary" onclick="${after==="checkout"?"openCheckout()":"closeModal()"}">${after==="checkout"?"Continue to Checkout":"Close"}</button><button class="secondary" onclick="logout()">Sign Out</button></div>`);
+  }else{
+    openModal(`<h2>👤 Create Account / Sign In</h2><div class="notice">An account is required to complete checkout and view your orders. If you already have an account, use <b>Sign In</b>.</div>
+    <div class="field"><label>Name</label><input id="authName" placeholder="Your full name"></div>
+    <div class="field"><label>Phone</label><input id="authPhone" placeholder="03xxxxxxxxx" inputmode="tel"></div>
+    <div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="you@example.com"></div>
+    <div class="field"><label>Password</label><input id="authPass" type="password" placeholder="Minimum 6 characters"></div>
+    <div class="actions"><button class="primary" onclick="signup(${after==="checkout"})">Create Account</button><button class="secondary" onclick="login()">Sign In</button></div>`);
+  }
+}
+async function authCall(endpoint,email,password){
+  const r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:"+endpoint+"?key="+API_KEY,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password,returnSecureToken:true})});
+  const d=await r.json();if(!r.ok)throw new Error(d.error?.message||"AUTH_ERROR");return d;
+}
+async function signup(goCheckout){
+  const name=$("authName").value.trim(),phone=$("authPhone").value.trim(),email=$("authEmail").value.trim(),password=$("authPass").value;
+  if(!name||!phone||!email||password.length<6)return openModal(`<h2>Missing Account Information</h2><p>Please enter your full name, phone number, email address, and a password of at least 6 characters.</p><div class="actions"><button class="primary" onclick="closeModal();openAccount(${goCheckout})">OK</button></div>`);
+  try{
+    const d=await authCall("signUp",email,password);
+    currentUser={uid:d.localId,name,phone,email};idToken=d.idToken;
+    localStorage.setItem("sindh_user",JSON.stringify(currentUser));localStorage.setItem("sindh_token",idToken);
+    try{
+      await db("customers/"+d.localId,{method:"PUT",body:JSON.stringify({uid:d.localId,name,phone,email,createdAt:Date.now()})});
+    }catch(profileErr){ console.warn("Customer profile save failed:",profileErr); }
+    goCheckout?openCheckout():closeModal();
+  }catch(e){
+    const msg=String(e.message||"");
+    if(msg.includes("EMAIL_EXISTS")){
+      openModal(`<h2>Account Already Exists</h2><p>An account is already registered with this email address.</p><p>Please use <b>Sign In</b> with your existing email and password.</p><div class="actions"><button class="primary" onclick="openAccount(${goCheckout})">Sign In</button></div>`);
+    }else if(msg.includes("OPERATION_NOT_ALLOWED")){
+      openModal(`<h2>Account Registration Unavailable</h2><p>Account registration is temporarily unavailable. Please try again later.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+    }else{
+      console.error(e);
+      openModal(`<h2>Account Could Not Be Created</h2><p>We could not create your account right now. Please check your details and try again.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+    }
+  }
+}
+async function login(){
+  const email=$("authEmail").value.trim(),password=$("authPass").value;
+  if(!email||!password)return openModal(`<h2>Missing Sign-In Details</h2><p>Please enter your email address and password.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+  try{
+    const d=await authCall("signInWithPassword",email,password);
+    let profile={uid:d.localId,email:d.email};
+    try{profile={...profile,...(await db("customers/"+d.localId)||{})}}catch(_){ }
+    currentUser=profile;idToken=d.idToken;localStorage.setItem("sindh_user",JSON.stringify(currentUser));localStorage.setItem("sindh_token",idToken);
+    closeModal();
+  }catch(e){
+    console.error(e);
+    openModal(`<h2>Sign In Failed</h2><p>The email or password is incorrect, or the account could not be reached. Please check your details and try again.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+  }
+}
+function logout(){currentUser=null;idToken="";localStorage.removeItem("sindh_user");localStorage.removeItem("sindh_token");closeModal();}
+
+async function openOrders(){
+  if(!currentUser)return openAccount();
+  try{
+    const data=await db("orders?orderBy=\"customerId\"&equalTo=\""+encodeURIComponent(currentUser.uid)+"\"");
+    const all=Object.values(data||{}).filter(o=>o.customerId===currentUser.uid).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    const current=all.filter(o=>!["Cancelled","Delivered"].includes(o.status));
+    const cancelled=all.filter(o=>o.status==="Cancelled");
+    const history=all.filter(o=>o.status==="Delivered");
+    const block=(title,list)=>`<h3>${title}</h3>${list.length?list.map(o=>`<div class="order"><div class="orderTop"><b>${esc(o.orderCode||"Order")}</b><span class="status">${esc(o.status||"Pending")}</span></div><div class="orderItems">${(o.items||[]).map(i=>`${esc(i.name)} × ${i.quantity} — Rs. ${money(i.subtotal)}`).join("<br>")}</div><div style="margin-top:8px"><b>Total: Rs. ${money(o.total)}</b></div>${o.status==="Pending"?`<button class="secondary" style="margin-top:10px;width:100%" onclick="cancelOrder('${esc(o.orderCode)}')">Cancel Order</button>`:""}</div>`).join(""):'<div class="empty">No orders found for your account.</div>'}`;
+    openModal(`<h2>📦 My Orders</h2>${block("Current Orders",current)}${block("Cancelled Orders",cancelled)}${block("Order History",history)}`);
+  }catch(e){
+    console.error(e);
+    openModal(`<h2>Orders Unavailable</h2><p>We could not load your orders right now. Please check your internet connection and try again.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+  }
+}
+async function cancelOrder(code){
+  try{
+    const data=await db("orders?orderBy=\"customerId\"&equalTo=\""+encodeURIComponent(currentUser.uid)+"\"");
+    const found=Object.entries(data||{}).find(([_,o])=>o.orderCode===code && o.customerId===currentUser.uid);
+    if(!found)return openModal(`<h2>Order Not Found</h2><p>We could not find this order in your account.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+    await db("orders/"+found[0],{method:"PATCH",body:JSON.stringify({status:"Cancelled",cancelledAt:Date.now()})});
+    openOrders();
+  }catch(e){
+    console.error(e);
+    openModal(`<h2>Cancellation Failed</h2><p>We could not cancel this order right now. Please try again.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+  }
+}
+
+function showPolicy(type){
+  if(type==="privacy")openModal(`<h2>🔒 Privacy Policy</h2><p>Sindh Mart customer ka name, phone, email, address aur order information order processing aur customer service ke liye save karta hai. Data ko unnecessary third parties ko sell nahi kiya jata.</p><p>Account information ko apne account aur orders manage karne ke liye use kiya jata hai.</p>`);
+  else openModal(`<h2>📄 Terms &amp; Conditions</h2><p>Delivery sirf Sukkur &amp; Rohri city areas mein available hai. Minimum order Rs. 500 hai.</p><p>Product availability, price aur delivery time stock aur local conditions ke mutabiq change ho sakte hain.</p><p>Customer ko checkout par correct name, phone, email aur complete address dena hoga.</p>`);
+}
+function openWhatsApp(){window.location.href="https://wa.me/"+WA+"?text="+encodeURIComponent("Assalam o Alaikum Sindh Mart, mujhe help chahiye.");}
+function openDrawer(){$("drawer").classList.add("open");$("drawerShade").style.display="block"}
+function closeDrawer(){$("drawer").classList.remove("open");$("drawerShade").style.display="none"}
+function goHome(){closeDrawer();window.scrollTo({top:0,behavior:"smooth"})}
+function openModal(content){$("modal").innerHTML=content;$("modalShade").style.display="block"}
+function closeModal(e){if(e && e.target!==$("modalShade"))return;$("modalShade").style.display="none"}
+let slide=0; startSlider();
+renderCartBar();loadData();
+</script>
+</body>
+</html>
