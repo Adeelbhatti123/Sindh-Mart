@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#08633a">
+<title>Sindh Mart — Everyday Shopping Made Easy</title>
+<style>
+:root{
+  --green:#08633a;--green2:#0b7a48;--light:#f5f6f4;--card:#fff;
+  --text:#171a18;--muted:#70756f;--line:#e5e8e4;--yellow:#ffd21a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--light);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+body{padding-bottom:92px}
+button,input,select{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+.topbar{background:var(--green);color:#fff;position:sticky;top:0;z-index:30;box-shadow:0 2px 12px #0002}
+.topinner{max-width:1200px;margin:auto;min-height:92px;padding:14px 22px;display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:12px}
+.menuBtn{border:0;background:none;color:#fff;font-size:42px;line-height:1;padding:0}
+.brand{font-weight:900;font-size:27px;letter-spacing:.5px}
+.delivery{font-weight:700;font-size:15px;margin-top:3px}
+.accountBtn{background:transparent;border:1.5px solid #ffffff99;color:#fff;border-radius:28px;padding:11px 20px;font-weight:800}
+.searchWrap{background:#fff;padding:18px 22px;position:relative;z-index:20}
+.search{width:100%;max-width:1150px;display:block;margin:auto;border:0;outline:0;background:#ecefed;border-radius:34px;padding:16px 52px 16px 20px;font-size:20px}
+.searchIcon{position:absolute;right:max(38px,calc((100% - 1150px)/2 + 16px));top:31px;font-size:25px;color:#333}
+main{max-width:1200px;margin:auto;padding:0 20px}
+.hero{margin-top:18px}
+.videoBox,.slide{height:auto;aspect-ratio:12/5;border-radius:0;background:#fff;color:inherit;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;position:relative}
+.videoBox .promoGif{width:100%;height:100%;object-fit:contain;display:none}
+.videoText{display:none!important}
+.slider{margin-top:18px;border-radius:0;overflow:hidden;background:#fff;box-shadow:none}
+.slide{border-radius:0;display:none;padding:0;text-align:left;justify-content:flex-start}
+.slide.active{display:flex}
+.slide h1,.slide p{display:none}
+.dots{height:54px;display:flex;align-items:center;justify-content:center;gap:14px}
+.dot{width:15px;height:15px;border-radius:50%;background:#bbb}.dot.active{background:var(--green)}
+.section{margin-top:30px}
+.section h2{font-size:30px;margin:0 0 15px}
+.hscroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:7px;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
+.categoryCard{border:0;color:inherit;font:inherit;cursor:pointer;flex:0 0 185px;background:#fff;border-radius:18px;padding:12px;text-align:center;box-shadow:0 2px 10px #0000000b}
+.categoryCard img{width:100%;height:105px;object-fit:contain;background:#eff8f2;border-radius:13px}
+.categoryCard .catIcon{height:105px;border-radius:13px;background:#eff8f2;display:flex;align-items:center;justify-content:center;font-size:45px}
+.categoryCard b{display:block;margin:10px 4px 2px;font-size:16px}
+.catTabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:8px}
+.catTabs::-webkit-scrollbar{display:none}
+.catTab{border:1px solid #ddd;background:#fff;border-radius:22px;padding:9px 15px;white-space:nowrap;font-weight:700}
+.catTab.active{background:var(--green);color:#fff;border-color:var(--green)}
+.productsGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.productsRow{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none}
+.productsRow::-webkit-scrollbar{display:none}
+.productCard{background:#fff;border-radius:20px;padding:11px;min-width:0;box-shadow:0 2px 12px #0000000b;position:relative}
+.productsRow .productCard{flex:0 0 245px}
+.productImg{width:100%;height:170px;object-fit:contain;border-radius:14px;background:#fafbfa}
+.discount{position:absolute;top:10px;left:10px;background:#ef3d3d;color:#fff;border-radius:13px;padding:5px 9px;font-size:12px;font-weight:800}
+.productName{font-size:16px;line-height:1.25;min-height:42px;margin-top:9px}
+.old{color:#888;text-decoration:line-through;font-size:13px;margin-top:4px}
+.price{font-size:19px;font-weight:900;margin-top:3px}
+.stock{font-size:12px;margin:6px 0;color:#117342;font-weight:700}
+.add{width:100%;border:0;background:var(--green);color:#fff;border-radius:13px;padding:11px;font-weight:800}
+.add:disabled{background:#bbb;cursor:not-allowed}
+.empty,.loading{padding:18px;color:var(--muted);background:#fff;border-radius:14px}
+.bottomCart{position:fixed;left:14px;right:14px;bottom:12px;z-index:50;display:none}
+.bottomCart button{width:100%;background:var(--yellow);border:0;border-radius:32px;padding:16px 20px;font-size:18px;font-weight:900;box-shadow:0 5px 25px #0003;display:flex;justify-content:space-between}
+.drawerShade,.modalShade{position:fixed;inset:0;background:#0007;z-index:80;display:none}
+.drawer{position:fixed;left:0;top:0;bottom:0;width:min(390px,88vw);background:#fff;z-index:90;transform:translateX(-105%);transition:.25s;overflow:auto}
+.drawer.open{transform:translateX(0)}
+.drawerHead{background:var(--green);padding:22px 20px 20px;color:#fff}
+.drawerLogo{width:150px;height:auto;display:block;margin:0 0 10px}
+.drawerTag{font-size:16px;font-weight:700}
+.drawerItem{padding:18px 22px;border-bottom:1px solid var(--line);font-size:17px;font-weight:800;background:#fff;text-align:left;border-left:0;border-right:0;border-top:0;width:100%}
+.modalShade{z-index:100;overflow:auto;padding:0;background:#f5f7f5}
+.modal{width:100%;max-width:900px;min-height:100dvh;margin:0 auto;background:#f5f7f5;border-radius:0;padding:0 0 100px;box-shadow:none}
+.modal h2{margin:0 0 16px}
+.appScreenHeader{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;min-height:60px;padding:12px 16px;background:var(--green);color:#fff;box-shadow:0 2px 10px #0002}
+.appScreenBack{border:0;background:#ffffff20;color:#fff;width:38px;height:38px;border-radius:50%;font-size:24px;line-height:1;flex:0 0 auto}
+.appScreenTitle{font-size:18px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appScreenBody{padding:16px;max-width:760px;margin:0 auto}
+.appScreenBody>.actions{position:sticky;bottom:0;padding:12px 0 calc(10px + env(safe-area-inset-bottom));background:#f5f7f5;z-index:4}
+.appScreenBody .bill,.appScreenBody .order,.appScreenBody .checkoutSection{background:#fff;box-shadow:0 2px 9px #00000008}
+.appScreenBody .field input,.appScreenBody .field textarea,.appScreenBody .field select{font-size:16px;min-height:46px}
+.productDetailHero{background:#fff;border-radius:18px;padding:20px;text-align:center}
+.productDetailHero img{width:100%;max-height:310px;object-fit:contain}
+.productDetailMeta{background:#fff;border-radius:16px;padding:16px;margin-top:12px}
+.brandPill{display:flex;align-items:center;gap:12px;padding:12px;background:#fff;border:1px solid var(--line);border-radius:16px;width:100%;text-align:left}
+.brandPill img{width:58px;height:58px;object-fit:contain;border-radius:10px}
+.similarGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.similarGrid .productCard{min-width:0}
+@media(min-width:700px){.appScreenBody{padding:24px}.similarGrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:650px){.modal{padding-bottom:calc(90px + env(safe-area-inset-bottom))}.appScreenBody{padding:13px}.appScreenHeader{min-height:58px}.appScreenTitle{font-size:17px}}.field{margin:10px 0}.field label{display:block;font-weight:700;font-size:13px;margin-bottom:5px}.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #d8ddd9;border-radius:12px;outline:0}.actions{display:flex;gap:10px;margin-top:16px}.primary{flex:1;border:0;background:var(--green);color:#fff;border-radius:12px;padding:12px;font-weight:800}.secondary{flex:1;border:1px solid #ddd;background:#fff;border-radius:12px;padding:12px;font-weight:800}
+.bill{border:1px solid var(--line);border-radius:15px;padding:12px;margin:12px 0}.billLine{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid #eee}.billLine:last-child{border-bottom:0}.total{font-size:21px;font-weight:900;display:flex;justify-content:space-between;margin-top:10px}
+.order{border:1px solid var(--line);border-radius:15px;padding:14px;margin:10px 0}.orderTop{display:flex;justify-content:space-between;gap:8px}.status{font-size:12px;font-weight:900;padding:5px 9px;border-radius:12px;background:#eaf5ef;color:#08633a}.orderItems{font-size:13px;color:#555;margin-top:8px}.notice{padding:11px;border-radius:12px;background:#fff5d6;margin:10px 0;font-size:13px}
+.footer{max-width:1200px;margin:40px auto 0;padding:20px;color:#777;text-align:center;font-size:13px}
+@media(max-width:850px){.productsGrid{grid-template-columns:repeat(3,1fr)}.productImg{height:150px}}
+@media(max-width:650px){
+  .topinner{min-height:110px;padding:10px 18px;grid-template-columns:54px 1fr auto;gap:8px}
+  .brand{font-size:23px}.delivery{font-size:14px;line-height:1.25}.accountBtn{padding:10px 15px}
+  .searchWrap{padding:16px 20px}.search{font-size:18px;padding:15px 48px 15px 18px}.searchIcon{right:37px;top:28px}
+  main{padding:0 14px}.videoBox,.slide{height:205px;border-radius:22px}.videoText h2{font-size:23px}.videoText p{font-size:14px}
+  .slide{padding:24px}.slide h1{font-size:30px}.slide p{font-size:16px}
+  .section{margin-top:24px}.section h2{font-size:27px}
+  .categoryCard{flex-basis:150px}.categoryCard img,.categoryCard .catIcon{height:88px}.productsGrid{grid-template-columns:repeat(2,1fr);gap:10px}.productImg{height:125px}.productCard{border-radius:17px;padding:9px}.productName{font-size:14px;min-height:38px}.price{font-size:17px}.add{padding:10px 7px;font-size:13px}
+  .productsRow .productCard{flex-basis:190px}
+  .drawer{width:86vw}.drawerLogo{width:125px}
+}
+
+/* Clean ad areas: no placeholder text, borders or overlays */
+.videoBox,.slider{background:#fff!important;border:0!important;box-shadow:none!important}
+.dynamicSlideImg{width:100%;height:100%;object-fit:contain;display:block}
+.dynamicSlideShade,.dynamicSlideContent{display:none!important}
+.bannerLink{position:absolute;inset:0;z-index:2}
+
+@media(max-width:700px){.videoBox,.slider{background:#fff!important;border:0!important;box-shadow:none!important}.videoBox{border-radius:0!important}.slider{border-radius:0!important}}
+
+.siteTagline{font-size:12px;font-weight:700;line-height:1.25;margin-top:2px;color:var(--green)}
+.brandTile{flex:0 0 140px;min-width:140px;border:1px solid #e0e8e2;border-radius:15px;background:#fff;padding:12px;text-align:center;cursor:pointer;box-shadow:0 2px 9px #00000008;color:#15271b}.brandTile img{width:76px;height:62px;object-fit:contain;display:block;margin:0 auto 8px}.brandTile b{display:block;font-size:14px}.brandTile span{font-size:11px;color:#68756c}.brandProductsTitle{display:flex;align-items:center;justify-content:space-between;gap:10px}.brandProductsTitle button{border:0;background:#eaf4ed;color:#087443;padding:8px 12px;border-radius:20px;font-weight:800}
+</style>
+
+<style id="final-green-cart-override">
+/* Sindh Mart final: bottom cart bar uses the website green */
+#bottomCart, .bottom-cart, .cart-bar, .sticky-cart, .floating-cart,
+#cartBar, .cartFooter, .cart-footer {
+  background: #056b3a !important;
+  color: #fff !important;
+}
+#bottomCart button, .bottom-cart button, .cart-bar button, .sticky-cart button,
+#cartBar button, .cartFooter button, .cart-footer button {
+  background: #056b3a !important;
+  color: #fff !important;
+}
+</style>
+
+
+<style id="sindh-mart-compact-final">
+/* Final compact mobile layout — preserves rounded green cart */
+@media(max-width:850px){.productsGrid{grid-template-columns:repeat(3,1fr);gap:9px}.productImg{height:120px}.productCard{padding:8px;border-radius:15px}.productName{font-size:13px;min-height:34px}.price{font-size:16px}.stock{font-size:11px;margin:4px 0}.add{padding:8px 5px;font-size:12px;border-radius:11px}}
+@media(max-width:650px){
+ .topinner{min-height:78px;padding:7px 12px;grid-template-columns:40px 1fr auto;gap:6px}
+ .menuBtn{font-size:30px}.brand{font-size:19px}.delivery{font-size:11px;margin-top:2px}.accountBtn{padding:7px 10px;font-size:12px;border-radius:20px}
+ .searchWrap{padding:10px 12px}.search{font-size:14px;padding:11px 38px 11px 14px}.searchIcon{right:25px;top:20px;font-size:20px}
+ main{padding:0 10px}.hero{margin-top:10px}.videoBox,.slide{height:155px;border-radius:17px}.slider{margin-top:10px;border-radius:17px}.slide{padding:18px;border-radius:17px 17px 0 0}.slide h1{font-size:22px;margin-bottom:7px}.slide p{font-size:13px}.dots{height:34px;gap:8px}.dot{width:9px;height:9px}
+ .section{margin-top:18px}.section h2{font-size:21px;margin-bottom:9px}.categoryCard{flex-basis:115px;padding:8px;border-radius:14px}.categoryCard img,.categoryCard .catIcon{height:68px}.categoryCard .catIcon{font-size:32px}.categoryCard b{font-size:13px;margin:7px 2px 1px}.catTab{padding:7px 11px;font-size:12px}
+ .productsGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.productImg{height:105px;border-radius:11px}.productCard{padding:7px;border-radius:14px}.productName{font-size:12px;line-height:1.2;min-height:30px;margin-top:6px}.old{font-size:11px;margin-top:2px}.price{font-size:15px;margin-top:2px}.stock{font-size:10px;margin:3px 0}.add{padding:8px 3px;font-size:11px;border-radius:9px}
+ .productsRow{gap:9px}.productsRow .productCard{flex:0 0 145px}.bottomCart{left:10px;right:10px;bottom:9px}.bottomCart button{border-radius:32px;padding:11px 14px;font-size:14px}
+}
+.cartQtyBox{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}.qtyBtn{width:30px;height:30px;border:0;border-radius:50%;background:#08633a;color:#fff;font-size:20px;font-weight:900;line-height:30px;padding:0}.qtyNum{font-weight:900;min-width:18px;text-align:center}
+.dynamicSlideImg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.dynamicSlideShade{position:absolute;inset:0;background:linear-gradient(90deg,#0008,#0001)}.dynamicSlideContent{position:relative;z-index:2;color:#fff}.bannerLink{position:absolute;inset:0;z-index:3}
+<style id="search-only-mode">
+/* Search mode: show search results first and hide homepage sections only while searching. */
+.searchMode main > *:not(#allProductsSection),
+.searchMode #catTabs {
+  display:none !important;
+}
+.searchMode #allProductsSection {
+  margin-top:18px;
+}
+.searchMode #productsHeading {
+  font-size:21px;
+}
+</style>
+
+<style id="mobile-width-safety-fix">
+/* Mobile-only width fix: keep ads/GIF/cart inside the viewport. Desktop unchanged. */
+@media (max-width:650px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden;}
+  .videoBox,.slider,.slide{width:100%;max-width:100%;min-width:0;overflow:hidden;}
+  .videoBox .promoGif,.dynamicSlideImg{display:block;max-width:100%;min-width:0;width:100%;height:100%;object-fit:contain;}
+  .bottomCart{left:8px!important;right:8px!important;width:auto!important;max-width:calc(100vw - 16px)!important;box-sizing:border-box;}
+  .bottomCart button{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box;}
+}
+</style>
+
+<style id="sindh-mart-professional-layout">
+:root{--green:#08633a;--green2:#0b7a48;--light:#f4f7f4;--card:#fff;--text:#17231d;--muted:#66736b;--line:#e2e9e3;--yellow:#ffd21a}
+html{scroll-behavior:smooth;scroll-padding-top:155px} body{background:#f5f7f5;color:#18251e}
+.sm-promo-strip{min-height:31px;padding:6px 4vw;background:#064c2e;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;font-weight:700;letter-spacing:.1px}
+.topbar{box-shadow:0 2px 10px #0a3f2414}.topinner{max-width:1320px;min-height:82px;padding:13px 26px;grid-template-columns:54px minmax(210px,1fr) auto;gap:18px}
+.brand{font-size:29px;letter-spacing:.8px}.siteTagline{color:#e2f4e9!important;font-size:12px!important}.delivery{font-size:12px;opacity:.9;font-weight:600}
+.menuBtn{font-size:34px;width:44px;height:44px;border-radius:12px;background:#ffffff17}.accountBtn{border-radius:10px;padding:12px 18px;border-color:#ffffff75;font-size:14px}
+.searchWrap{padding:15px 24px;background:#fff;border-bottom:1px solid #e8eee9}.search{max-width:900px;background:#f2f5f2;border:1px solid #e2e9e3;border-radius:10px;padding:14px 50px 14px 18px;font-size:16px}.search:focus{border-color:#74a98b;box-shadow:0 0 0 3px #08633a14}.searchIcon{right:max(40px,calc((100% - 900px)/2 + 18px));top:27px;font-size:23px}
+.sm-main-nav{display:flex;justify-content:center;align-items:center;gap:4px;overflow:auto;white-space:nowrap;padding:0 16px;background:#fff;border-bottom:1px solid #e5ebe6;box-shadow:0 3px 8px #102b1b06}.sm-main-nav button{border:0;background:transparent;color:#25392c;padding:13px 17px;font-size:13px;font-weight:800}.sm-main-nav button:hover{color:var(--green);background:#eff7f1}
+.sm-trust-row{max-width:1280px;margin:13px auto 0;padding:0 20px;display:flex;justify-content:center;gap:30px;color:#466653;font-size:12px;font-weight:700}.sm-trust-row span{white-space:nowrap}
+main{max-width:1320px;padding:0 22px}.hero{margin-top:18px}.videoBox,.slider{border-radius:15px!important;overflow:hidden;background:#fff}.videoBox{aspect-ratio:16/5;max-height:340px}.slider{margin-top:14px;box-shadow:0 2px 14px #152c1b0a!important}.slide{aspect-ratio:16/5;max-height:340px;border-radius:15px!important}.dynamicSlideImg{object-fit:cover!important}.dots{height:34px}.dot{width:8px;height:8px}
+.section{margin-top:30px}.section h2{font-size:24px;font-weight:900;letter-spacing:-.3px;margin-bottom:15px;display:flex;align-items:center;gap:10px}.section h2:after{content:"";height:1px;background:#dfe8e1;flex:1;margin-left:6px}
+.categoryCard{flex-basis:158px;border:1px solid #edf1ed;border-radius:14px;box-shadow:0 3px 12px #17392308;transition:transform .18s,box-shadow .18s}.categoryCard:hover,.productCard:hover{transform:translateY(-2px);box-shadow:0 8px 22px #17392312}.categoryCard img,.categoryCard .catIcon{background:#f4f8f4}.productsGrid{grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}.productsRow .productCard{flex:0 0 190px}.productCard{border:1px solid #e9eee9;border-radius:13px;padding:11px;box-shadow:0 3px 12px #17392307;transition:transform .18s,box-shadow .18s;cursor:pointer}.productImg{height:160px;background:#fff}.productName{font-size:14px;font-weight:600;min-height:36px}.price{color:#17231d;font-size:18px}.stock{font-size:11px}.add{border-radius:9px;background:var(--green2);padding:10px;font-size:13px}.add:hover,.primary:hover{background:#064c2e}.discount{border-radius:6px;background:#dff2e5;color:#08633a;font-size:11px}
+.brandTile{flex-basis:150px;border-radius:13px;border-color:#e8eee9;box-shadow:0 3px 12px #17392307}.bottomCart{left:50%;right:auto;transform:translateX(-50%);width:min(600px,calc(100% - 30px));bottom:14px}.bottomCart button{background:var(--green)!important;color:#fff!important;border-radius:18px;padding:15px 20px;box-shadow:0 8px 25px #063c2450}
+.footer{max-width:none;margin-top:46px;padding:30px 20px 110px;background:#eaf1eb;color:#506257}
+.sm-mobile-nav{display:none}.modalShade{background:#f5f7f5}.modal{background:#f5f7f5}.appScreenHeader{box-shadow:0 2px 10px #0a3f2415}.appScreenBody{max-width:800px}.productDetailHero,.productDetailMeta{border:1px solid #e8eee9;box-shadow:0 3px 14px #17392307}
+@media(min-width:1000px){.topinner{grid-template-columns:54px minmax(260px,1fr) auto}.searchWrap{padding-top:13px;padding-bottom:13px}.productsGrid{grid-template-columns:repeat(5,minmax(0,1fr))}.productImg{height:175px}}
+@media(min-width:1250px){.productsGrid{grid-template-columns:repeat(6,minmax(0,1fr))}.productsRow .productCard{flex-basis:205px}}
+@media(max-width:850px){.sm-promo-strip{justify-content:center}.sm-promo-strip span:nth-child(3){display:none}.sm-trust-row{gap:12px;justify-content:flex-start;overflow:auto;padding:0 14px}.sm-trust-row span{font-size:10px}.productsGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.productImg{height:125px}}
+@media(max-width:650px){
+ body{padding-bottom:145px}.sm-promo-strip{font-size:10px;min-height:26px;padding:5px 8px}.topinner{min-height:70px;padding:8px 12px;grid-template-columns:38px 1fr auto;gap:8px}.brand{font-size:20px}.delivery{font-size:10px}.siteTagline{font-size:10px!important}.accountBtn{padding:8px 10px;font-size:11px}.menuBtn{font-size:27px;width:36px;height:36px;border-radius:10px}
+ .searchWrap{padding:10px 12px}.search{font-size:14px;padding:11px 40px 11px 13px;border-radius:10px}.searchIcon{right:25px;top:18px;font-size:19px}.sm-main-nav{justify-content:flex-start;padding:0 8px}.sm-main-nav button{padding:11px 12px;font-size:12px}.sm-trust-row{margin-top:10px}.sm-trust-row span{font-size:10px}
+ main{padding:0 11px}.hero{margin-top:12px}.videoBox,.slide{height:auto;aspect-ratio:16/7;min-height:115px;border-radius:12px!important}.slider{margin-top:10px}.section{margin-top:22px}.section h2{font-size:19px;margin-bottom:11px}.section h2:after{display:none}.categoryCard{flex-basis:118px;padding:8px;border-radius:12px}.categoryCard img,.categoryCard .catIcon{height:68px}.categoryCard b{font-size:12px}.productsGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.productCard{padding:7px;border-radius:11px}.productImg{height:95px}.productName{font-size:11px;min-height:29px}.price{font-size:14px}.stock{font-size:9px}.add{font-size:10px;padding:8px 2px}.productsRow{gap:8px}.productsRow .productCard{flex-basis:137px}.bottomCart{width:calc(100% - 22px);bottom:65px;left:11px;right:11px;transform:none}.bottomCart button{border-radius:15px;padding:12px 14px;font-size:13px}.sm-mobile-nav{position:fixed;display:grid;grid-template-columns:repeat(4,1fr);left:0;right:0;bottom:0;z-index:45;background:#fff;border-top:1px solid #e0e8e1;padding:7px 8px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -5px 20px #1739230a}.sm-mobile-nav button{border:0;background:transparent;color:#5c6a60;font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:2px}.sm-mobile-nav button span{font-size:21px;line-height:22px;color:var(--green)}.footer{padding-bottom:165px}.modal{padding-bottom:calc(105px + env(safe-area-inset-bottom))}
+}
+</style>
+
+<style id="naheed-inspired-detail-cart-checkout-orders">
+.naheed-product-page,.naheed-cart-page,.naheed-checkout-page,.naheed-orders-page{color:#202820}
+.naheed-section-kicker{font-size:11px;font-weight:900;letter-spacing:1.4px;color:#167347;margin-bottom:5px}
+.naheed-product-main{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:22px;align-items:start}
+.naheed-product-photo{position:relative;display:flex;align-items:center;justify-content:center;min-height:320px;background:#fff;border:1px solid #e8eee9;border-radius:16px;padding:18px;overflow:hidden}
+.naheed-product-photo img{width:100%;height:340px;object-fit:contain;display:block}.naheed-no-image{font-size:70px;padding:70px 0}
+.naheed-sale-badge{position:absolute;left:14px;top:14px;z-index:1;background:#c62f38;color:#fff;font-weight:900;font-size:12px;border-radius:5px;padding:7px 9px}
+.naheed-product-info{background:#fff;border:1px solid #e8eee9;border-radius:16px;padding:20px}.naheed-crumb{font-size:12px;color:#7b867e;margin-bottom:12px}.naheed-crumb span{padding:0 5px}
+.naheed-product-info h2{font-size:24px;line-height:1.3;margin:0 0 12px;color:#1b2c20}.naheed-product-stock{display:inline-flex;padding:5px 9px;border-radius:5px;font-size:12px;font-weight:800;margin-bottom:14px}.naheed-product-stock.is-available{color:#12683d;background:#e9f7ef}.naheed-product-stock.is-unavailable{color:#a32020;background:#fff0f0}
+.naheed-product-price{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 3px}.naheed-product-price strong{font-size:29px;color:#0a683b}.naheed-product-price del{font-size:15px;color:#8b928c}.naheed-product-tax{font-size:12px;color:#7d877f;margin-bottom:20px}
+.naheed-product-actions{display:flex;gap:10px;align-items:center;margin:14px 0 20px}.naheed-detail-qty{display:inline-flex;align-items:center;justify-content:space-between;border:1px solid #d9e3dc;border-radius:8px;overflow:hidden;background:#fff;min-width:112px;height:46px;flex-shrink:0}.naheed-detail-qty button{width:36px;height:44px;border:0;background:#eff7f1;color:#12683d;font-size:22px;font-weight:700}.naheed-detail-qty span{min-width:28px;text-align:center;font-weight:800}.naheed-add-button{min-height:46px!important;border-radius:8px!important;flex:1}
+.naheed-delivery-note{display:flex;gap:11px;align-items:center;padding:12px 0;border-top:1px solid #edf0ed;font-size:18px}.naheed-delivery-note div{display:flex;flex-direction:column;gap:3px;font-size:13px}.naheed-delivery-note small{font-size:12px;color:#78827b}
+.naheed-detail-card{background:#fff;border:1px solid #e8eee9;border-radius:13px;padding:18px;margin-top:15px}.naheed-detail-card h3,.naheed-similar-section h3{font-size:17px;margin:0 0 13px}.naheed-description{line-height:1.7;white-space:pre-line;color:#4b554d}.naheed-spec-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid #edf0ed;font-size:13px;margin-top:10px}.naheed-spec-row span{color:#7c867e}.naheed-similar-section{margin-top:22px}.naheed-similar-section h3{font-size:20px}
+.naheed-cart-page>h2,.naheed-checkout-page>h2,.naheed-orders-page>h2{margin:0 0 18px;font-size:25px;color:#203327}.naheed-item-count{font-size:15px;color:#7c867e;font-weight:500}.naheed-cart-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:17px;align-items:start}.naheed-cart-list,.naheed-order-summary,.naheed-checkout-summary{background:#fff;border:1px solid #e6ece7;border-radius:13px;padding:15px}
+.naheed-cart-item{display:flex;gap:13px;padding:14px 0;border-bottom:1px solid #edf0ed}.naheed-cart-item:first-child{padding-top:0}.naheed-cart-item:last-of-type{border-bottom:0}.naheed-cart-thumb{width:90px;height:90px;flex-shrink:0;border:1px solid #eef1ee;border-radius:9px;display:flex;align-items:center;justify-content:center;background:#fff;font-size:28px;overflow:hidden}.naheed-cart-thumb img{width:100%;height:100%;object-fit:contain}.naheed-cart-item-info{min-width:0;flex:1;display:flex;flex-direction:column;gap:6px}.naheed-cart-item-info>b{font-size:14px;line-height:1.4}.naheed-cart-item-info small{font-size:12px;color:#7c867e}.naheed-cart-item-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:auto}.naheed-detail-qty.compact{min-width:94px;height:34px}.naheed-detail-qty.compact button{width:30px;height:32px;font-size:18px}.naheed-detail-qty.compact span{font-size:13px}.naheed-line-total{white-space:nowrap;color:#1b6a40;font-size:14px}.naheed-continue{margin-top:16px;border:0;background:transparent;color:#16683d;font-weight:800;padding:8px 0}
+.naheed-order-summary h3,.naheed-checkout-summary h3{font-size:17px;margin:0 0 16px}.naheed-summary-row,.naheed-summary-total{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #edf0ed;font-size:13px}.naheed-summary-row span,.naheed-summary-total span{color:#6e7971}.naheed-summary-total{border-bottom:0;border-top:1px solid #dfe7e1;margin-top:8px;padding-top:16px;align-items:center}.naheed-summary-total strong{font-size:22px;color:#12683d}.naheed-minimum-note{font-size:12px;color:#8a5810;background:#fff6df;border-radius:7px;padding:10px;margin:10px 0}.naheed-checkout-button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:14px 16px;border-radius:8px;font-size:15px}.naheed-checkout-button span{font-size:20px}.naheed-secure-note{font-size:12px;color:#657269;margin-top:12px;line-height:1.5}.naheed-empty-cart,.naheed-empty-orders{text-align:center;background:#fff;border:1px solid #e8eee9;border-radius:13px;padding:30px 18px}.naheed-empty-cart>div{font-size:45px}.naheed-empty-cart h3{margin:10px 0 5px}.naheed-empty-cart p,.naheed-empty-orders p{color:#7c867e;font-size:13px}.naheed-empty-cart .primary{max-width:240px;margin:12px auto 0}
+.naheed-checkout-layout{display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:17px;align-items:start}.naheed-checkout-form-column{min-width:0}.naheed-checkout-form-column .checkoutSection{margin:0 0 13px;padding:16px;border-radius:12px;border:1px solid #e5ebe6;box-shadow:0 2px 8px #17392305;background:#fff}.naheed-checkout-form-column .checkoutSection h3{font-size:16px;color:#263b2c}.naheed-checkout-summary{position:sticky;top:65px}.naheed-checkout-summary-items .billLine{font-size:12px;padding:9px 0;line-height:1.45}.naheed-checkout-summary-items .billLine span{max-width:70%}.naheed-back-cart{width:100%;margin-top:9px;border-radius:8px}
+.naheed-orders-intro{font-size:13px;color:#768178;margin:-8px 0 16px}.naheed-orders-tabs{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto}.naheed-orders-tabs span{display:flex;align-items:center;gap:8px;white-space:nowrap;padding:9px 12px;background:#fff;border:1px solid #e4eae5;border-radius:7px;font-size:12px;color:#59655c}.naheed-orders-tabs b{color:#176d40}.naheed-orders-section{margin:20px 0}.naheed-orders-section>h3{display:flex;align-items:center;gap:9px;font-size:17px;margin:0 0 11px}.naheed-orders-section>h3 span{font-size:12px;background:#eaf5ee;color:#16683d;padding:3px 8px;border-radius:20px}.naheed-order-card{background:#fff;border:1px solid #e3e9e4;border-radius:12px;padding:15px;margin-bottom:12px}.naheed-order-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.naheed-order-card-head>div{display:flex;flex-direction:column;gap:5px;min-width:0}.naheed-order-card-head small{font-size:10px;letter-spacing:.8px;color:#7c867e}.naheed-order-card-head>div>b{font-size:14px;overflow-wrap:anywhere}.naheed-order-status{white-space:nowrap}.naheed-order-status.delivered{background:#e8f7ee;color:#146a3d}.naheed-order-status.cancelled{background:#fff0f0;color:#b12d2d}.naheed-order-status.pending{background:#fff4d8;color:#8a5a09}.naheed-order-date{font-size:12px;color:#7b867d;margin-top:10px;padding-bottom:12px;border-bottom:1px solid #edf0ed}.naheed-order-products{padding:7px 0}.naheed-order-product{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:12px;line-height:1.4}.naheed-order-product>span{min-width:0;overflow-wrap:anywhere}.naheed-order-product>span b{color:#778178;white-space:nowrap}.naheed-order-card-total{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #e7ece8;padding-top:13px;margin-top:4px;font-size:13px}.naheed-order-card-total span{color:#6e7971}.naheed-order-card-total strong{font-size:18px;color:#16683d}.naheed-cancel-order{width:100%;margin-top:13px;border-radius:8px}
+@media(max-width:720px){.naheed-product-main{grid-template-columns:1fr;gap:12px}.naheed-product-photo{min-height:230px;padding:10px}.naheed-product-photo img{height:260px;max-height:42vh}.naheed-product-info{padding:15px}.naheed-product-info h2{font-size:21px}.naheed-product-price strong{font-size:26px}.naheed-cart-layout,.naheed-checkout-layout{grid-template-columns:1fr;gap:12px}.naheed-order-summary{order:2}.naheed-checkout-summary{position:static;order:2}.naheed-cart-list,.naheed-order-summary,.naheed-checkout-summary{padding:12px}.naheed-cart-thumb{width:76px;height:76px}.naheed-cart-item{gap:10px}.naheed-cart-item-info>b{font-size:13px}.naheed-detail-qty.compact{min-width:86px}.naheed-detail-qty.compact button{width:27px}.naheed-line-total{font-size:13px}.naheed-checkout-form-column .checkoutSection{padding:13px}.naheed-orders-tabs span{padding:8px 10px}}
+@media(min-width:1000px){.naheed-product-page,.naheed-cart-page,.naheed-checkout-page,.naheed-orders-page{padding:6px 8px 18px}.naheed-product-photo img{height:390px}}
+</style>
+</head>
+<style id="requested-professional-fixes">
+.checkoutSection{border:1px solid #e4e9e5;border-radius:14px;padding:12px;margin:12px 0;background:#fbfcfb}.savedAddressCard{border:1px solid #dfe6e1;border-radius:12px;padding:11px;margin:8px 0;background:#fff}.savedAddressCard b{color:#08633a}.paymentInfo{background:#eef8f2;border:1px solid #cde7d7;border-radius:12px;padding:12px;margin-top:10px}.receiptBox{border:1px dashed #9bb7a6;border-radius:12px;padding:12px;background:#f8fbf9}.drawerBrand{font-weight:900;font-size:24px;letter-spacing:.4px}.drawerBrandLine{font-size:13px;font-weight:700;margin-top:4px;opacity:.92}
+</style>
+
+<body>
+
+<div class="sm-promo-strip"><span>Serving Sukkur &amp; Rohri</span><span>Free delivery on orders of Rs. 500+</span><span>Everyday essentials, delivered to your door</span></div>
+<header class="topbar">
+  <div class="topinner">
+    <button class="menuBtn" onclick="openDrawer()" aria-label="Menu">☰</button>
+    <div>
+      <div class="brand">SINDH MART</div>
+      <div class="siteTagline" id="siteTagline">Har Ghar Ki Zaroorat, Ab Online</div>
+      <div class="delivery">Delivery available only for Sukkur &amp; Rohri city</div>
+    </div>
+    <button class="accountBtn" onclick="openAccount()">Account</button>
+  </div>
+</header>
+
+<div class="searchWrap">
+  <input id="search" class="search" placeholder="Search products..." autocomplete="off">
+  <span class="searchIcon">⌕</span>
+</div>
+<nav class="sm-main-nav" aria-label="Main navigation">
+  <button onclick="goHome()">Home</button>
+  <button onclick="navToSection('categoriesSection')">Shop by Category</button>
+  <button onclick="navToSection('newSection')">New Arrivals</button>
+  <button onclick="navToSection('topSection')">Top Picks</button>
+  <button onclick="navToSection('brandsSection')">Brands</button>
+  <button onclick="openOrders()">My Orders</button>
+</nav>
+<div class="sm-trust-row"><span>✓ Local delivery in Sukkur &amp; Rohri</span><span>✓ Cash on Delivery available</span><span>✓ Easy ordering on mobile</span></div>
+
+<main>
+  <section class="hero">
+    <div class="videoBox" id="videoBox">
+      <img id="promoGif" class="promoGif" src="" alt="">
+    </div>
+
+    <div class="slider">
+      <div class="slide active"><div><h1>Welcome to Sindh Mart</h1><p>Fresh groceries delivered in Sukkur &amp; Rohri.</p></div></div>
+      <div class="slide"><div><h1>Daily Grocery Deals</h1><p>Quality products at your doorstep.</p></div></div>
+      <div class="slide"><div><h1>Fresh • Quality • Trust</h1><p>Har Ghar Ki Zaroorat, Ab Online.</p></div></div>
+      <div class="dots"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
+    </div>
+  </section>
+
+  <section class="section" id="newSection">
+    <h2>New Arrivals</h2>
+    <div id="newProducts" class="productsRow"><div class="loading">Loading products...</div></div>
+  </section>
+
+  <section class="section" id="topSection">
+    <h2>Top Picks</h2>
+    <div id="topProducts" class="productsRow"><div class="loading">Loading products...</div></div>
+  </section>
+
+  <section class="section" id="categoriesSection">
+    <h2>Categories</h2>
+    <div id="catCards" class="hscroll"><div class="loading">Loading categories...</div></div>
+  </section>
+
+  <section class="section" id="brandsSection"><h2>Shop by Brand</h2><div id="brandCards" class="hscroll"><div class="loading">Loading brands...</div></div></section>
+
+  <section class="section" id="allProductsSection">
+    <h2 id="productsHeading">All Products</h2>
+    <div id="catTabs" class="catTabs"></div>
+    <div id="products" class="productsGrid"><div class="loading">Loading products...</div></div>
+  </section>
+
+  <div class="footer">© Sindh Mart — Har Ghar Ki Zaroorat, Ab Online</div>
+</main>
+
+<nav class="sm-mobile-nav" aria-label="Quick navigation">
+  <button onclick="goHome()"><span>⌂</span>Home</button>
+  <button onclick="navToSection('categoriesSection')"><span>▦</span>Categories</button>
+  <button onclick="openOrders()"><span>▤</span>Orders</button>
+  <button onclick="openAccount()"><span>♙</span>Account</button>
+</nav>
+<div class="bottomCart" id="bottomCart">
+  <button onclick="openCart()"><span id="cartQty">0 items</span><span>View Cart</span><span>Rs. <span id="cartTotal">0</span></span></button>
+</div>
+
+<div class="drawerShade" id="drawerShade" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawerHead">
+    <div class="drawerBrand">SINDH MART</div><div class="drawerBrandLine">Har Ghar Ki Zaroorat, Ab Online</div>
+  </div>
+  <button class="drawerItem" onclick="goHome()">🏠 Home</button>
+  <button class="drawerItem" onclick="openAccount();closeDrawer()">👤 My Profile</button>
+  <button class="drawerItem" onclick="openOrders();closeDrawer()">📦 My Orders</button>
+  <button class="drawerItem" onclick="openCart();closeDrawer()">🛒 Cart</button>
+  <button class="drawerItem" onclick="showPolicy('privacy');closeDrawer()">🔒 Privacy Policy</button>
+  <button class="drawerItem" onclick="showPolicy('terms');closeDrawer()">📄 Terms &amp; Conditions</button>
+  <button class="drawerItem" onclick="openWhatsApp();closeDrawer()" style="color:#08733f">💬 Help Center / WhatsApp</button>
+</aside>
+
+<div class="modalShade" id="modalShade" onclick="closeModal(event)">
+  <div class="modal" id="modal" onclick="event.stopPropagation()"></div>
+</div>
+
+<script>
+const DB_URL="https://sindh-mart-default-rtdb.firebaseio.com";
+const API_KEY="AIzaSyDWZ45RK76BS_IbPRJZ0XLQESMGEcQQELE";
+const WA="923051501651";
+
+let products=[], categories={}, cart=JSON.parse(localStorage.getItem("sindh_cart")||"[]");
+let currentCat="all", currentUser=JSON.parse(localStorage.getItem("sindh_user")||"null"), idToken=localStorage.getItem("sindh_token")||"", refreshToken=localStorage.getItem("sindh_refresh_token")||"";
+const $=id=>document.getElementById(id);
+
+function saveCart(){localStorage.setItem("sindh_cart",JSON.stringify(cart));renderCartBar();renderAll();renderFeatured()}
+function money(n){return Number(n||0).toLocaleString("en-PK")}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function normalizeCatName(v){return String(v||"").replaceAll("_"," ").replace(/\b\w/g,x=>x.toUpperCase())}
+
+async function db(path,opts={}){
+  const method=(opts.method||"GET").toUpperCase();
+  const needsAuth=path.startsWith("customers/") || path==="customers" || path.startsWith("orders") || method!=="GET";
+  const basePath=path.split("?")[0];
+  const query=path.includes("?") ? "?"+path.split("?").slice(1).join("?") : "";
+  async function request(){
+    const authQ=needsAuth && idToken ? (query ? "&" : "?")+"auth="+encodeURIComponent(idToken) : "";
+    return fetch(DB_URL+"/"+basePath+".json"+query+authQ,{cache:"no-store",...opts,headers:{"Content-Type":"application/json",...(opts.headers||{})}});
+  }
+  let r=await request();
+  if((r.status===401 || r.status===403) && refreshToken){
+    if(await refreshAuthToken()) r=await request();
+  }
+  if(!r.ok) throw new Error("Firebase "+r.status);
+  return r.status===204?null:r.json();
+}
+function safeUrl(v){const s=String(v||"").trim();if(/^data:image\/(png|jpe?g|webp|gif);base64,/i.test(s))return s;try{const u=new URL(s,location.href);return /^https?:$/.test(u.protocol)?u.href:""}catch{return ""}}
+function renderAds(data){
+  const ads=Object.entries(data||{}).map(([id,a])=>({id,...a}))
+    .filter(a=>a.active!==false)
+    .sort((a,b)=>Number(a.order||0)-Number(b.order||0));
+
+  const banners=ads.filter(a=>a.type==="banner");
+  const gifs=ads.filter(a=>a.type==="gif" || a.type==="video");
+
+  const slider=document.querySelector(".slider");
+  if(banners.length){
+    slider.innerHTML=banners.map((a,i)=>{
+      const img=safeUrl(a.image||a.url);
+      const link=safeUrl(a.link);
+      return `<div class="slide ${i===0?"active":""}">
+        ${link?`<a class="bannerLink" href="${esc(link)}" target="_blank" rel="noopener"></a>`:""}
+        ${img?`<img class="dynamicSlideImg" src="${esc(img)}" alt="">`:""}
+      </div>`;
+    }).join("") + (banners.length>1 ? `<div class="dots">${banners.map((_,i)=>`<span class="dot ${i===0?"active":""}"></span>`).join("")}</div>` : "");
+    startSlider();
+  }else{
+    slider.innerHTML="";
+  }
+
+  const v=gifs[0];
+  const el=$("promoGif");
+  const vu=safeUrl(v?.url||v?.image);
+  if(vu){
+    el.src=vu;
+    el.style.display="block";
+  }else{
+    el.removeAttribute("src");
+    el.style.display="none";
+  }
+}
+function startSlider(){clearInterval(window.sindhSliderTimer);window.sindhSliderTimer=setInterval(()=>{const slides=document.querySelectorAll(".slider .slide"),dots=document.querySelectorAll(".slider .dot");if(slides.length<2)return;let i=[...slides].findIndex(x=>x.classList.contains("active"));if(i<0)i=0;slides[i].classList.remove("active");if(dots[i])dots[i].classList.remove("active");i=(i+1)%slides.length;slides[i].classList.add("active");if(dots[i])dots[i].classList.add("active")},4000)}
+const defaultPages={
+  privacy:"Sindh Mart customer ka name, phone, email, address aur order information order processing aur customer service ke liye save karta hai. Data ko unnecessary third parties ko sell nahi kiya jata.\n\nAccount information ko apne account aur orders manage karne ke liye use kiya jata hai.",
+  terms:"Delivery sirf Sukkur & Rohri city areas mein available hai. Minimum order Rs. 500 hai.\n\nProduct availability, price aur delivery time stock aur local conditions ke mutabiq change ho sakte hain.\n\nCustomer ko checkout par correct name, phone, email aur complete address dena hoga.",
+  return:"Damaged, incorrect ya expired product ki surat mein customer delivery ke waqt ya 24 hours ke andar Sindh Mart se contact kare. Return/refund product condition aur case verification ke baad process hoga."
+};
+let sitePages={...defaultPages};
+function applySiteBranding(){const tagline=String(sitePages.tagline||"Har Ghar Ki Zaroorat, Ab Online");document.querySelectorAll("#siteTagline,.drawerTag,.drawerBrandLine,[data-site-tagline]").forEach(el=>el.textContent=tagline);document.title="Sindh Mart — "+tagline;}
+const defaultDeliverySettings={cities:{Sukkur:{name:"Sukkur",areas:["Military Road","Bandar Road"]},Rohri:{name:"Rohri",areas:["Rohri City"]}}};
+const defaultPaymentSettings={methods:[{id:"cod",name:"Cash on Delivery",provider:"",enabled:true,accountTitle:"",accountNumber:"",receiptRequired:false,instruction:"Payment will be collected at delivery."},{id:"online",name:"Easypaisa / JazzCash",provider:"Easypaisa",enabled:true,accountTitle:"",accountNumber:"",receiptRequired:true,instruction:"Transfer the exact amount and upload the payment receipt."},{id:"bank",name:"Bank Transfer",provider:"Meezan Bank",enabled:true,accountTitle:"",accountNumber:"",receiptRequired:true,instruction:"Transfer the exact amount and upload the payment receipt."},{id:"card",name:"Credit / Debit Card",provider:"",enabled:false,accountTitle:"",accountNumber:"",receiptRequired:false,instruction:"When the rider arrives with your parcel, the rider will collect your card and process the payment on the card machine."}]};
+async function loadData(){
+  try{
+    const [ps,cs,ads,pages]=await Promise.all([db("products"),db("categories"),db("ads").catch(()=>({})),db("pages").catch(()=>({}))]);
+    sitePages={...defaultPages,deliverySettings:defaultDeliverySettings,paymentSettings:defaultPaymentSettings,...(pages||{})};
+    products=Object.entries(ps||{}).map(([id,p])=>({id,...p})).filter(p=>p);
+    categories=cs||{};
+    renderAds(ads||{});
+    applySiteBranding();
+    renderBrandCards();renderCategoryCards();renderTabs();renderAll();renderFeatured();
+  }catch(e){
+    console.error(e);
+    $("products").innerHTML='<div class="empty">Products are temporarily unavailable. Please check your internet connection and try again.</div>';
+    $("newProducts").innerHTML='<div class="empty">Products are temporarily unavailable.</div>';
+    $("topProducts").innerHTML='<div class="empty">Products are temporarily unavailable.</div>';
+    $("catCards").innerHTML='<div class="empty">Categories are temporarily unavailable.</div>';
+  }
+}
+function applyWebsiteTagline(){const t=String(sitePages.tagline||'Har Ghar Ki Zaroorat, Ab Online').trim();const el=$('siteTagline');if(el)el.textContent=t;document.querySelectorAll('.drawerTag,.drawerBrandLine').forEach(x=>{if(t)x.textContent=t});document.querySelectorAll('.footer').forEach(x=>{x.textContent='© Sindh Mart — '+t});}
+function getBrands(){const b=sitePages.brands||{};return Object.entries(b).map(([id,x])=>({id,...(typeof x==='string'?{name:x}:x)})).filter(x=>x.name);}
+function renderBrandCards(){const box=$('brandCards');if(!box)return;const arr=getBrands();box.innerHTML=arr.length?arr.map(b=>`<button class="brandTile" onclick="openBrand('${esc(b.id)}')">${b.logo||b.image?`<img src="${esc(b.logo||b.image)}" alt="${esc(b.name)}" onerror="this.style.display='none'">`:`<div style="font-size:32px;margin:8px">🏷️</div>`}<b>${esc(b.name)}</b><span>Explore products</span></button>`).join(''):'<div class="empty">Brands will appear here soon.</div>';}
+function openBrand(id){const b=getBrands().find(x=>x.id===id);if(!b)return;const list=products.filter(p=>String(p.brandId||p.brand||'')===String(id)||String(p.brandName||'').toLowerCase()===String(b.name).toLowerCase());openModal(`<div class="brandProductsTitle"><h2>${esc(b.name)} Products</h2><button onclick="closeModal()">Back to shop</button></div>${b.logo||b.image?`<div class="detailHero" style="min-height:100px"><img src="${esc(b.logo||b.image)}" alt="${esc(b.name)}" style="height:90px"></div>`:''}<p class="menuPageIntro">Explore products from ${esc(b.name)} available at Sindh Mart.</p>${list.length?`<div class="similarGrid">${list.map(productCard).join('')}</div>`:'<div class="empty">No products from this brand are available yet.</div>'}`)}
+function catId(p){return String(p.categoryId||p.category||"").toLowerCase()}
+function catName(id){
+  const c=categories[id];
+  if(typeof c==="string") return c;
+  return c?.name||normalizeCatName(id);
+}
+function isAvailable(p){return p.available!==false && p.active!==false && Number(p.stock??1)>0}
+function productCard(p){
+  const avail=isAvailable(p), price=Number(p.price||0), old=Number(p.oldPrice||p.originalPrice||0);
+  const img=p.imageUrl||p.image||"";
+  return `<div class="productCard" role="button" tabindex="0" onclick="openProductDetail('${esc(p.id)}')" onkeydown="if(event.key==='Enter')openProductDetail('${esc(p.id)}')">
+    ${old>price?`<div class="discount">${Math.round((1-price/old)*100)}% off</div>`:""}
+    ${img?`<img class="productImg" src="${esc(img)}" onerror="this.style.display='none'">`:`<div class="productImg"></div>`}
+    <div class="productName">${esc(p.name||"Product")}</div>
+    ${old>price?`<div class="old">Rs. ${money(old)}</div>`:""}
+    <div class="price">Rs. ${money(price)}</div>
+    <div class="stock">${avail?"✓ Available":"✕ Out of Stock"}</div>
+    ${avail ? (cart.find(x=>x.id===p.id)?.qty ? `<div class="cartQtyBox"><button class="qtyBtn" onclick="event.stopPropagation();changeQty('${p.id}',-1)">−</button><span class="qtyNum">${cart.find(x=>x.id===p.id).qty}</span><button class="qtyBtn" onclick="event.stopPropagation();changeQty('${p.id}',1)">+</button></div>` : `<button class="add" onclick="event.stopPropagation();addCart('${p.id}')">Add to Cart</button>`) : `<button class="add" disabled>Out of Stock</button>`}
+  </div>`;
+}
+function openProductDetail(id){
+  const p=products.find(x=>x.id===id);if(!p)return;
+  const img=p.imageUrl||p.image||"",availableNow=isAvailable(p),brandList=getBrands(),
+    brand=brandList.find(b=>b.id===(p.brandId||p.brand)||String(b.name||"").toLowerCase()===String(p.brandName||p.brand||"").toLowerCase()),
+    similar=products.filter(x=>x.id!==id&&catId(x)===catId(p)).slice(0,20),inCart=cart.find(x=>x.id===id);
+  window._detailProductId=id;window._detailQty=inCart?Number(inCart.qty||1):1;
+  const brandHtml=brand?`<button class="brandPill" onclick="openBrand('${esc(brand.id)}')">${brand.logo||brand.image?`<img src="${esc(brand.logo||brand.image)}" alt="${esc(brand.name)}">`:'<span style="font-size:32px">🏷️</span>'}<span style="flex:1"><b style="font-size:16px">${esc(brand.name||"")}</b><br><span class="muted">Explore more products</span></span><b style="font-size:26px">›</b></button>`:"";
+  openModal(`<div class="naheed-product-page">
+    <div class="naheed-product-main">
+      <div class="naheed-product-photo">${Number(p.oldPrice||0)>Number(p.price||0)?`<span class="naheed-sale-badge">${Math.round((1-Number(p.price||0)/Number(p.oldPrice||1))*100)}% OFF</span>`:""}${img?`<img src="${esc(img)}" alt="${esc(p.name||"Product")}" onerror="this.style.display='none'">`:'<div class="naheed-no-image">🛒</div>'}</div>
+      <div class="naheed-product-info"><div class="naheed-crumb">Home <span>›</span> ${esc(catName(catId(p)))}</div>
+        <h2>${esc(p.name||"Product Details")}</h2><div class="naheed-product-stock ${availableNow?"is-available":"is-unavailable"}">${availableNow?"✓ In Stock":"✕ Out of Stock"}</div>
+        <div class="naheed-product-price">${Number(p.oldPrice||0)>Number(p.price||0)?`<del>Rs. ${money(p.oldPrice)}</del>`:""}<strong>Rs. ${money(p.price)}</strong></div><div class="naheed-product-tax">Inclusive of applicable taxes</div>
+        <div class="naheed-product-actions">${availableNow?`<div class="naheed-detail-qty"><button aria-label="Decrease quantity" onclick="detailQtyChange(-1)">−</button><span id="detailQty">${window._detailQty}</span><button aria-label="Increase quantity" onclick="detailQtyChange(1)">+</button></div><button class="primary naheed-add-button" onclick="addProductDetailToCart('${esc(p.id)}')">Add to Cart</button>`:'<button class="primary naheed-add-button" disabled>Out of Stock</button>'}</div>
+        <div class="naheed-delivery-note"><span>🚚</span><div><b>Delivery in Sukkur &amp; Rohri</b><small>Free delivery on orders of Rs. 500+</small></div></div>
+        <div class="naheed-delivery-note"><span>💵</span><div><b>Convenient payment</b><small>Cash on Delivery available where enabled</small></div></div>
+      </div></div>
+    <div class="naheed-detail-card"><h3>Product Description</h3><div class="naheed-description">${esc(p.description||p.details||p.name||"Product details are not available yet.")}</div><div class="naheed-spec-row"><span>Category</span><b>${esc(catName(catId(p)))}</b></div>${p.sku?`<div class="naheed-spec-row"><span>Product Code</span><b>${esc(p.sku)}</b></div>`:""}</div>
+    ${brandHtml?`<div class="naheed-detail-card"><h3>Shop by Brand</h3>${brandHtml}</div>`:""}
+    <div class="naheed-similar-section"><h3>You may also like</h3><div class="similarGrid">${similar.map(productCard).join("")||'<div class="empty">No similar products available.</div>'}</div></div>
+  </div>`);
+}
+function detailQtyChange(delta){window._detailQty=Math.max(1,Math.min(99,Number(window._detailQty||1)+delta));const n=$("detailQty");if(n)n.textContent=window._detailQty;}
+function addProductDetailToCart(id){
+  const p=products.find(x=>x.id===id);if(!p||!isAvailable(p))return alert("This product is currently unavailable.");
+  const desired=Math.max(1,Number(window._detailQty||1)),existing=cart.find(x=>x.id===id),current=existing?Number(existing.qty||0):0;
+  for(let i=current;i>desired;i--)changeQty(id,-1);
+  const latest=cart.find(x=>x.id===id),now=latest?Number(latest.qty||0):0;
+  for(let i=now;i<desired;i++)addCart(id);
+  openCart();
+}
+function renderAll(){
+  const q=$("search").value.trim().toLowerCase();
+
+  // Search mode: show ONLY search results at the top.
+  const searchMode=!!q;
+  document.body.classList.toggle("searchMode",searchMode);
+
+  // Use inline display as well as the CSS class so this works reliably
+  // even when the page is opened as a local content:// file on Android.
+  const allSection=$("allProductsSection");
+  if(allSection){
+    allSection.style.display="";
+    allSection.style.marginTop=searchMode ? "18px" : "";
+  }
+  document.querySelectorAll("main > *:not(#allProductsSection)").forEach(el=>{
+    el.style.display=searchMode ? "none" : "";
+  });
+  const tabs=$("catTabs");
+  if(tabs) tabs.style.display=searchMode ? "none" : "";
+
+  if(searchMode) currentCat="all";
+
+  let list=products.filter(p=>{
+    if(currentCat!=="all" && catId(p)!==currentCat) return false;
+    return !q || String(p.name||"").toLowerCase().includes(q) || catName(catId(p)).toLowerCase().includes(q) || String(p.brand||"").toLowerCase().includes(q);
+  });
+
+  $("products").innerHTML=list.length?list.map(productCard).join(""):'<div class="empty">No products found.</div>';
+  $("productsHeading").textContent=searchMode ? "Search Results" : "All Products";
+}
+function renderFeatured(){
+  const avail=products.filter(isAvailable);
+  const newer=avail.filter(p=>p.newArrival===true || p.newArrival==="true" || p.tag==="New Arrival").slice(0,8);
+  const top=avail.filter(p=>p.topPick===true || p.topPick==="true" || p.featured===true || p.tag==="Top Pick").slice(0,8);
+  $("newProducts").innerHTML=(newer.length?newer:avail.slice(0,8)).map(productCard).join("")||'<div class="empty">No products available.</div>';
+  $("topProducts").innerHTML=(top.length?top:avail.slice(0,8)).map(productCard).join("")||'<div class="empty">No products available.</div>';
+}
+function renderCategoryCards(){
+  const entries=Object.entries(categories);
+  $("catCards").innerHTML=entries.length?entries.map(([id,c])=>{
+    const name=typeof c==="string"?c:(c?.name||normalizeCatName(id)), img=typeof c==="object"?(c?.image||c?.imageUrl||""):"";
+    return `<button class="categoryCard" onclick="selectCat('${esc(id)}')">${img?`<img src="${esc(img)}" alt="${esc(name)}">`:`<div class="catIcon">🛒</div>`}<b>${esc(name)}</b></button>`;
+  }).join(""):'<div class="empty">No categories found.</div>';
+}
+function renderTabs(){
+  $("catTabs").innerHTML='<button class="catTab active" id="cat-all" onclick="selectCat(\'all\')">All</button>'+
+    Object.entries(categories).map(([id,c])=>`<button class="catTab" id="cat-${esc(id)}" onclick="selectCat('${esc(id)}')">${esc(typeof c==="string"?c:(c?.name||normalizeCatName(id)))}</button>`).join("");
+}
+
+function navToSection(id){
+  const search=$('search'); if(search && search.value){search.value='';renderAll();}
+  const el=$(id); if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+  closeDrawer();
+}
+
+function selectCat(id){
+  currentCat=id;
+  document.querySelectorAll(".catTab").forEach(x=>x.classList.remove("active"));
+  const el=$("cat-"+id);if(el)el.classList.add("active");
+  renderAll();document.querySelector("#products").scrollIntoView({behavior:"smooth",block:"start"});
+}
+$("search").addEventListener("input",renderAll);
+
+function addCart(id){
+  const p=products.find(x=>x.id===id);
+  if(!p||!isAvailable(p)) return alert("This product is currently unavailable.");
+  const found=cart.find(x=>x.id===id);
+  if(found) found.qty++;
+  else cart.push({id:p.id,name:p.name,price:Number(p.price||0),image:p.imageUrl||p.image||"",qty:1});
+  saveCart();
+}
+function changeQty(id,d){
+  const x=cart.find(a=>a.id===id);if(!x)return;
+  x.qty+=d;if(x.qty<=0)cart=cart.filter(a=>a.id!==id);saveCart();
+}
+function cartTotal(){return cart.reduce((s,x)=>s+Number(x.price)*Number(x.qty),0)}
+function renderCartBar(){
+  const qty=cart.reduce((s,x)=>s+x.qty,0), total=cartTotal();
+  $("bottomCart").style.display=qty?"block":"none";$("cartQty").textContent=qty+" item"+(qty===1?"":"s");$("cartTotal").textContent=money(total);
+}
+function openCart(){
+  const items=cart.map(x=>`<div class="naheed-cart-item"><div class="naheed-cart-thumb">${x.image?`<img src="${esc(x.image)}" alt="${esc(x.name)}" onerror="this.style.display='none'">`:'🛒'}</div><div class="naheed-cart-item-info"><b>${esc(x.name)}</b><small>Rs. ${money(x.price)} each</small><div class="naheed-cart-item-bottom"><div class="naheed-detail-qty compact"><button aria-label="Decrease quantity" onclick="changeQty('${esc(x.id)}',-1);openCart()">−</button><span>${x.qty}</span><button aria-label="Increase quantity" onclick="changeQty('${esc(x.id)}',1);openCart()">+</button></div><b class="naheed-line-total">Rs. ${money(x.price*x.qty)}</b></div></div></div>`).join("");
+  openModal(`<div class="naheed-cart-page"><div class="naheed-section-kicker">YOUR SHOPPING BAG</div><h2>My Cart <span class="naheed-item-count">(${cart.reduce((s,x)=>s+Number(x.qty||0),0)} items)</span></h2>
+  ${cart.length?`<div class="naheed-cart-layout"><div class="naheed-cart-list">${items}<button class="naheed-continue" onclick="closeModal()">← Continue Shopping</button></div><aside class="naheed-order-summary"><h3>Order Summary</h3><div class="naheed-summary-row"><span>Subtotal</span><b>Rs. ${money(cartTotal())}</b></div><div class="naheed-summary-row"><span>Delivery</span><b>${cartTotal()>=500?"Free":"Calculated at checkout"}</b></div><div class="naheed-summary-total"><span>Total</span><strong>Rs. ${money(cartTotal())}</strong></div>${cartTotal()<500?`<div class="naheed-minimum-note">Add Rs. ${money(500-cartTotal())} more to reach the Rs. 500 minimum order.</div>`:""}<button class="primary naheed-checkout-button" onclick="startCheckout()">Proceed to Checkout <span>→</span></button><div class="naheed-secure-note">🔒 Secure checkout · Cash on Delivery available</div></aside></div>`:'<div class="naheed-empty-cart"><div>🛒</div><h3>Your cart is empty</h3><p>Looks like you haven\'t added anything to your cart yet.</p><button class="primary" onclick="closeModal()">Start Shopping</button></div>'}</div>`);
+}
+function startCheckout(){
+  if(!cart.length)return;
+  if(cartTotal()<500){openModal(`<h2>Minimum Order Required</h2><p>Your order total must be at least <b>Rs. 500</b> to proceed with checkout.</p><div class="actions"><button class="primary" onclick="closeModal()">Continue Shopping</button></div>`);return}
+  if(!currentUser){openAccount("checkout");return}
+  openCheckout();
+}
+async function getCustomerProfile(){
+  if(!currentUser?.uid) return {};
+  try{return await db("customers/"+currentUser.uid)||{};}catch(e){return {...currentUser};}
+}
+function getDeliverySettings(){
+  const d=sitePages.deliverySettings||{};
+  const cities=d.cities||{
+    Sukkur:{name:"Sukkur",areas:["Military Road","Bandar Road"]},
+    Rohri:{name:"Rohri",areas:["Rohri City"]}
+  };
+  Object.values(cities).forEach(c=>{if(c&&Array.isArray(c.areas))c.areas=[...c.areas].sort((a,b)=>String(a).localeCompare(String(b),undefined,{sensitivity:"base"}))});
+  return cities;
+}
+function getDeliveryTiming(){return sitePages.deliverySettings?.timing||{cutoff:"12:00",sameDayFrom:"16:00",sameDayTo:"20:00",nextDayFrom:"16:00",nextDayTo:"20:00"};}
+function formatTime12(v){const [h,m]=String(v||"00:00").split(":").map(Number);const d=new Date();d.setHours(h||0,m||0,0,0);return d.toLocaleTimeString("en-PK",{hour:"numeric",minute:"2-digit",hour12:true});}
+function deliveryEstimate(){const t=getDeliveryTiming(),now=new Date(),[h,m]=String(t.cutoff||"12:00").split(":").map(Number),cutoff=new Date();cutoff.setHours(h||0,m||0,0,0);const same=now.getTime()<=cutoff.getTime();return same?`If you place your order before ${formatTime12(t.cutoff)}, it will be delivered today from ${formatTime12(t.sameDayFrom)} to ${formatTime12(t.sameDayTo)}.`:`If you place your order after ${formatTime12(t.cutoff)}, it will be delivered tomorrow from ${formatTime12(t.nextDayFrom)} to ${formatTime12(t.nextDayTo)}.`;}
+function getPaymentSettings(){
+  const p=sitePages.paymentSettings||{};
+  let methods=Array.isArray(p.methods)?p.methods.map(x=>({...x})):[];
+  const defaults=[
+    {id:"cod",name:"Cash on Delivery",provider:"",enabled:true,accountTitle:"",accountNumber:"",receiptRequired:false,instruction:"Payment will be collected at delivery."},
+    {id:"online",name:"Easypaisa / JazzCash",provider:"Easypaisa",enabled:true,accountTitle:"",accountNumber:"",receiptRequired:true,instruction:"Transfer the exact amount and upload the payment receipt."},
+    {id:"bank",name:"Bank Transfer",provider:"Meezan Bank",enabled:true,accountTitle:"",accountNumber:"",receiptRequired:true,instruction:"Transfer the exact amount and upload the payment receipt."},
+    {id:"card",name:"Credit / Debit Card",provider:"",enabled:false,accountTitle:"",accountNumber:"",receiptRequired:false,instruction:"When the rider arrives with your parcel, the rider will collect your card and process the payment on the card machine."}
+  ];
+  defaults.forEach(d=>{const i=methods.findIndex(x=>x.id===d.id);if(i<0)methods.push(d);else methods[i]={...d,...methods[i],id:d.id,name:methods[i].name||d.name};});
+  return methods;
+}
+function savedAddressOptions(list,selected="new"){
+  const arr=Array.isArray(list)?list.slice(0,3):[];
+  return `<option value="new" ${selected==="new"?"selected":""}>➕ New Address</option>`+arr.map((a,i)=>`<option value="${i}" ${String(selected)===String(i)?"selected":""}>📍 ${esc(a.label||((a.city||"")+" - "+(a.area||"")))}</option>`).join("");
+}
+async function openCheckout(){
+  const u={...(currentUser||{}),...(await getCustomerProfile())};
+  const rows=cart.map(x=>`<div class="billLine"><span>${esc(x.name)} × ${x.qty}</span><b>Rs. ${money(x.price*x.qty)}</b></div>`).join("");
+  const cities=getDeliverySettings(), cityEntries=Object.entries(cities);
+  const saved=Array.isArray(u.addresses)?u.addresses.slice(0,3):[]; sitePages._checkoutSaved=saved;
+  const defaultAddr=u.addresses?.[0]||{};
+  const payments=getPaymentSettings().filter(x=>x.enabled!==false);
+  const paymentOptions=payments.map(x=>`<option value="${esc(x.id)}">${esc(x.name||"Payment")}</option>`).join("");
+  openModal(`<div class="naheed-checkout-page"><div class="naheed-section-kicker">ALMOST THERE</div><h2>Checkout</h2><div class="naheed-checkout-layout"><div class="naheed-checkout-form-column">
+  <div class="checkoutSection"><h3 style="margin:0 0 8px">👤 Customer Details</h3>
+  <div class="field"><label>Name</label><input id="coName" value="${esc(u.name||"")}" autocomplete="name"></div>
+  <div class="field"><label>Phone Number</label><input id="coPhone" value="${esc(u.phone||"")}" inputmode="tel" autocomplete="tel"></div>
+  <div class="field"><label>Email</label><input id="coEmail" value="${esc(u.email||"")}" type="email" autocomplete="email"></div></div>
+  <div class="checkoutSection"><h3 style="margin:0 0 8px">📍 Delivery Address</h3>
+  <div class="field"><label>Saved Address</label><select id="coSavedAddress" onchange="applySavedAddress()">${savedAddressOptions(saved)}</select></div>
+  <div class="field"><label>City</label><select id="coCity" onchange="updateCheckoutAreas()"><option value="">Select City</option>${cityEntries.map(([id,c])=>`<option value="${esc(id)}" ${id===defaultAddr.city?"selected":""}>${esc(c.name||id)}</option>`).join("")}</select></div>
+  <div class="field"><label>Area</label><select id="coArea"><option value="">Select Area</option></select></div>
+  <div class="field"><label>Complete Address</label><textarea id="coAddress" rows="3" placeholder="House/Flat, Street, Block, Landmark etc." autocomplete="street-address">${esc(defaultAddr.address||u.address||"")}</textarea></div>
+  <p class="muted">You can save up to 3 delivery addresses and use them again on future orders.</p><div class="actions"><button class="secondary" onclick="saveCheckoutAddressNow()">💾 Save This Address</button></div></div>
+  <div class="notice" style="background:#eef8f2;border:1px solid #cde7d7;color:#174d35"><b>🚚 Delivery Time</b><br>${deliveryEstimate()}</div>
+  <div class="checkoutSection"><h3 style="margin:0 0 8px">💳 Payment Method</h3>
+  <div class="field"><label>Select Payment Method</label><select id="coPayment" onchange="updatePaymentInfo()">${paymentOptions||'<option value="cod">Cash on Delivery</option>'}</select></div>
+  <div id="paymentInfo"></div></div>
+  <div class="notice">Minimum order: Rs. 500.</div>
+  </div><aside class="naheed-checkout-summary"><h3>Order Summary</h3><div class="naheed-checkout-summary-items">${rows}</div><div class="naheed-summary-total"><span>Total Payment</span><strong>Rs. ${money(cartTotal())}</strong></div><div class="naheed-secure-note">🚚 Delivery in Sukkur &amp; Rohri</div><div class="naheed-secure-note">💵 Choose your available payment method</div><button class="primary naheed-checkout-button" onclick="placeOrder()">Place Order <span>→</span></button><button class="secondary naheed-back-cart" onclick="openCart()">Back to Cart</button></aside></div></div>`);
+  updateCheckoutAreas(defaultAddr.city||"",defaultAddr.area||"");
+  updatePaymentInfo();
+}
+function updateCheckoutAreas(cityOverride="",areaOverride=""){
+  const city=cityOverride||$("coCity")?.value||"", box=$("coArea"); if(!box)return;
+  const cities=getDeliverySettings(), c=cities[city], areas=Array.isArray(c?.areas)?c.areas:[];
+  box.innerHTML='<option value="">Select Area</option>'+areas.map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join("");
+  if(areaOverride)box.value=areaOverride;
+}
+function applySavedAddress(){
+  const sel=$("coSavedAddress"),v=sel?.value; if(v==="new"){
+    if($("coCity"))$("coCity").value="";updateCheckoutAreas();if($("coAddress"))$("coAddress").value="";return;
+  }
+  const p=sitePages._checkoutSaved||[]; const a=p[Number(v)]; if(!a)return;
+  $("coCity").value=a.city||"";updateCheckoutAreas(a.city||"",a.area||"");$("coAddress").value=a.address||"";
+}
+async function saveCheckoutAddressNow(){
+  const name=$("coName")?.value.trim(),city=$("coCity")?.value.trim(),area=$("coArea")?.value.trim(),address=$("coAddress")?.value.trim(),phone=$("coPhone")?.value.trim(),email=$("coEmail")?.value.trim();
+  if(!name||!city||!area||!address||!phone||!email){openModal(`<h2>Complete Address First</h2><p>Please enter your name, phone, email, city, area and complete address before saving.</p><div class="actions"><button class="primary" onclick="closeModal();openCheckout()">OK</button></div>`);return;}
+  await saveCustomerAddress(name,phone,email,city,area,address);
+  openCheckout();
+}
+function updatePaymentInfo(){
+  const id=$("coPayment")?.value||"cod", methods=getPaymentSettings(), p=methods.find(x=>x.id===id)||methods[0]||{};
+  const box=$("paymentInfo"); if(!box)return;
+  const provider=p.provider?`<div><b>Bank / Wallet:</b> ${esc(p.provider)}</div>`:"";
+  const instruction=p.instruction?`<div style="margin-top:8px"><b>Instructions:</b> ${esc(p.instruction)}</div>`:"";
+  if(id==="cod" || /cash/i.test(p.name||"")){box.innerHTML=`<div class="paymentInfo"><b>${esc(p.name||"Cash on Delivery")}</b><br>${instruction||"Payment will be collected at delivery."}</div>`;return;}
+  if(id==="card"){box.innerHTML=`<div class="paymentInfo"><b>💳 ${esc(p.name||"Credit / Debit Card")}</b>${instruction?`<div style="margin-top:8px">${esc(p.instruction)}</div>`:""}</div>`;return;}
+  const receipt=p.receiptRequired!==false;
+  box.innerHTML=`<div class="paymentInfo"><b>${esc(p.name||"Online Payment")}</b>${provider}<div style="margin-top:6px"><b>Account Title:</b> ${esc(p.accountTitle||"Not provided")}</div><div><b>Account Number / IBAN:</b> ${esc(p.accountNumber||"Not provided")}</div><div><b>Amount to Pay:</b> Rs. ${money(cartTotal())}</div>${instruction?`<div style="margin-top:8px">${esc(p.instruction)}</div>`:""}${receipt?`<div class="receiptBox" style="margin-top:10px"><b>Upload Payment Receipt *</b><input id="coReceipt" type="file" accept="image/*,.pdf" style="margin-top:8px;width:100%"><div class="muted">Receipt upload is required for this payment method.</div></div>`:`<div class="notice" style="margin-top:10px">Receipt upload is not required for this payment method.</div>`}</div>`;
+}
+async function readReceiptFile(file){
+  if(!file)return null;
+  if(file.size>2.5*1024*1024)throw new Error("Receipt file must be 2.5 MB or smaller.");
+  return await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve({data:r.result,name:file.name,type:file.type,size:file.size});r.onerror=reject;r.readAsDataURL(file)});
+}
+async function saveCustomerAddress(name,phone,email,city,area,address){
+  if(!currentUser?.uid)return;
+  try{
+    const profile=await getCustomerProfile();let arr=Array.isArray(profile.addresses)?profile.addresses.slice(0,3):[];
+    const key=(city+"|"+area+"|"+address).toLowerCase().trim();
+    arr=arr.filter(a=>(String(a.city||"")+"|"+String(a.area||"")+"|"+String(a.address||"")).toLowerCase().trim()!==key);
+    arr.unshift({label:(city||"")+(area?" - "+area:""),city,area,address,savedAt:Date.now()});arr=arr.slice(0,3);
+    await db("customers/"+currentUser.uid,{method:"PATCH",body:JSON.stringify({uid:currentUser.uid,name,phone,email,address,city,area,addresses:arr,lastOrderAt:Date.now()})});
+    currentUser={...currentUser,name,phone,email,address,city,area,addresses:arr};localStorage.setItem("sindh_user",JSON.stringify(currentUser));
+  }catch(e){console.warn("Customer address save skipped:",e);}
+}
+async function sendOrderEmail(order){
+  const e=sitePages.emailSettings||{};if(!e.enabled||!e.publicKey||!e.serviceId||!e.templateId||!order?.customer?.email)return false;
+  try{
+    if(window.emailjs){emailjs.init({publicKey:e.publicKey});const items=(order.items||[]).map(i=>`${i.name} x ${i.quantity} — Rs. ${i.subtotal}`).join('\n');await emailjs.send(e.serviceId,e.templateId,{to_email:order.customer.email,customer_name:order.customer.name||'',order_code:order.orderCode||'',order_total:String(order.total||0),payment_method:order.paymentMethod||'',order_status:order.status||'Pending',delivery_time:deliveryEstimate(),items,from_name:e.fromName||'Sindh Mart'});return true;}
+  }catch(err){console.warn('Order email could not be sent:',err)}return false;
+}
+async function placeOrder(){
+  const name=$("coName").value.trim(),city=$("coCity").value.trim(),area=$("coArea").value.trim(),address=$("coAddress").value.trim(),phone=$("coPhone").value.trim(),email=$("coEmail").value.trim(),paymentId=$("coPayment")?.value||"cod";
+  if(!name||!city||!area||!address||!phone||!email)return openModal(`<h2>Missing Information</h2><p>Please complete your name, phone, email, city, area and complete address.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+  if(cartTotal()<500)return openModal(`<h2>Minimum Order Required</h2><p>Your order total must be at least <b>Rs. 500</b> to place an order.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+  const method=(getPaymentSettings().find(x=>x.id===paymentId)||{id:paymentId,name:paymentId}).name||paymentId;
+  let receipt=null;
+  const selectedPayment=(getPaymentSettings().find(x=>x.id===paymentId)||{});
+  const requiresReceipt=paymentId!=="cod" && !/cash/i.test(method) && selectedPayment.receiptRequired!==false;
+  if(requiresReceipt){
+    const f=$("coReceipt")?.files?.[0]; if(!f)return openModal(`<h2>Receipt Required</h2><p>Please upload your payment receipt before placing an online-paid order.</p><div class="actions"><button class="primary" onclick="closeModal();openCheckout()">OK</button></div>`);
+    try{receipt=await readReceiptFile(f)}catch(e){return openModal(`<h2>Receipt Error</h2><p>${esc(e.message)}</p><div class="actions"><button class="primary" onclick="closeModal();openCheckout()">OK</button></div>`)}
+  }
+  for(const item of cart){const live=products.find(p=>p.id===item.id);const stock=Number(live?.stock??0);if(!live||live.available===false||live.active===false||stock<Number(item.qty||0)){return openModal(`<h2>Stock Updated</h2><p>Sorry, <b>${esc(item.name)}</b> does not have enough stock for your requested quantity. Please update your cart and try again.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);}}
+  const code="SM-"+new Date().toISOString().slice(0,10).replaceAll("-","")+"-"+Math.random().toString(36).slice(2,7).toUpperCase();
+  const order={orderCode:code,customerId:currentUser?.uid||"",customer:{name,address,phone,email,city,area},items:cart.map(x=>({productId:x.id,name:x.name,price:x.price,quantity:x.qty,subtotal:x.price*x.qty})),total:cartTotal(),paymentMethod:method,paymentStatus:(paymentId==="cod"||/cash/i.test(method))?"COD":(paymentId==="card"?"Unpaid":"Pending Verification"),status:"Pending",createdAt:Date.now()};
+  if(receipt){order.receipt={name:receipt.name,type:receipt.type,data:receipt.data,size:receipt.size,uploadedAt:Date.now()};}
+  try{
+    const orderId=(crypto.randomUUID?crypto.randomUUID():("order_"+Date.now()+"_"+Math.random().toString(36).slice(2,10))).replace(/[^A-Za-z0-9_-]/g,"");
+    await db("orders/"+orderId,{method:"PUT",body:JSON.stringify(order)});
+    await saveCustomerAddress(name,phone,email,city,area,address);
+    await sendOrderEmail(order);
+    cart=[];saveCart();
+    openModal(`<h2>✅ Order Placed</h2><p>Your order code is <b>${code}</b>.</p><p>${receipt?"Your payment receipt has been uploaded and the order is pending payment verification.":"Your order is pending confirmation."}</p><div class="actions"><button class="primary" onclick="closeModal()">Continue Shopping</button><button class="secondary" onclick="openOrders()">My Orders</button></div>`);
+  }catch(e){console.error(e);openModal(`<h2>Order Could Not Be Placed</h2><p>We could not place your order right now. Please check your internet connection and try again.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);}
+}
+
+function renderSavedAddresses(list){
+  const arr=Array.isArray(list)?list.slice(0,3):[];
+  return arr.length?arr.map((a,i)=>`<div class="savedAddressCard"><b>Address ${i+1}</b><br>${esc(a.city||"")} • ${esc(a.area||"")}<br>${esc(a.address||"")}<div class="actions"><button class="secondary" onclick="deleteSavedAddress(${i})">Delete</button></div></div>`).join(""):'<div class="empty">No saved addresses yet.</div>';
+}
+async function openAccount(after){
+  if(currentUser){
+    const p=await getCustomerProfile();currentUser={...currentUser,...p};localStorage.setItem("sindh_user",JSON.stringify(currentUser));
+    openModal(`<h2>👤 My Profile</h2><div class="bill"><div><b>Name:</b> ${esc(currentUser.name||"-")}</div><div style="margin-top:8px"><b>Email:</b> ${esc(currentUser.email||"-")}</div><div style="margin-top:8px"><b>Phone:</b> ${esc(currentUser.phone||"-")}</div><div style="margin-top:8px"><b>Address:</b> ${esc(currentUser.address||"-")}</div><div style="margin-top:8px"><b>City:</b> ${esc(currentUser.city||"-")}</div><div style="margin-top:8px"><b>Area:</b> ${esc(currentUser.area||"-")}</div></div><h3>📍 Saved Addresses</h3>${renderSavedAddresses(currentUser.addresses)}<div class="actions"><button class="primary" onclick="closeModal();${after==="checkout"?"openCheckout()":""}">${after==="checkout"?"Continue to Checkout":"Close"}</button><button class="secondary" onclick="logout()">Sign Out</button></div>`);
+  }else{
+    openModal(`<h2>👤 Create Account / Sign In</h2><div class="notice">An account is required to complete checkout and view your orders.</div><div class="field"><label>Name (for new account)</label><input id="authName" placeholder="Your full name"></div><div class="field"><label>Phone</label><input id="authPhone" placeholder="03xxxxxxxxx" inputmode="tel"></div><div class="field"><label>Email</label><input id="authEmail" type="email" placeholder="you@example.com"></div><div class="field"><label>Password</label><input id="authPass" type="password" placeholder="Minimum 6 characters"></div><div class="actions"><button class="primary" onclick="signup(${after==="checkout"})">Create Account</button><button class="secondary" onclick="login()">Sign In</button></div><button class="secondary" style="width:100%;margin-top:10px" onclick="forgotPassword()">🔑 Forgot Password?</button>`);
+  }
+}
+async function deleteSavedAddress(index){
+  const arr=Array.isArray(currentUser?.addresses)?currentUser.addresses.slice(0,3):[];if(!arr[index])return;arr.splice(index,1);
+  try{await db("customers/"+currentUser.uid,{method:"PATCH",body:JSON.stringify({uid:currentUser.uid,addresses:arr})});currentUser.addresses=arr;localStorage.setItem("sindh_user",JSON.stringify(currentUser));openAccount();}catch(e){openModal(`<h2>Could Not Delete</h2><p>Please try again.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`)}
+}
+async function forgotPassword(){
+  const email=$("authEmail")?.value.trim()||"";
+  if(!email)return openModal(`<h2>Forgot Password</h2><div class="field"><label>Registered Email</label><input id="resetEmail" type="email" placeholder="you@example.com"></div><div class="actions"><button class="secondary" onclick="openAccount()">Back</button><button class="primary" onclick="sendPasswordReset()">Send Reset Link</button></div>`);
+  await sendPasswordReset(email);
+}
+async function sendPasswordReset(emailArg){
+  const email=(emailArg||$("resetEmail")?.value||$("authEmail")?.value||"").trim();if(!email)return;
+  try{
+    const r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key="+API_KEY,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({requestType:"PASSWORD_RESET",email})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error?.message||"RESET_FAILED");
+    openModal(`<h2>📧 Reset Link Sent</h2><p>Password reset link has been sent to <b>${esc(email)}</b>. Please check the email inbox/spam folder.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+  }catch(e){openModal(`<h2>Password Reset Failed</h2><p>We could not send the reset link. Please make sure this email is registered.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`)}
+}
+
+async function authCall(endpoint,email,password){
+  const r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:"+endpoint+"?key="+API_KEY,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password,returnSecureToken:true})});
+  const d=await r.json();if(!r.ok)throw new Error(d.error?.message||"AUTH_ERROR");return d;
+}
+async function signup(goCheckout){
+  const name=$("authName").value.trim(),phone=$("authPhone").value.trim(),email=$("authEmail").value.trim(),password=$("authPass").value;
+  if(!name||!phone||!email||password.length<6)return openModal(`<h2>Missing Account Information</h2><p>Please enter your full name, phone number, email address, and a password of at least 6 characters.</p><div class="actions"><button class="primary" onclick="closeModal();openAccount(${goCheckout})">OK</button></div>`);
+  try{
+    const d=await authCall("signUp",email,password);
+    currentUser={uid:d.localId,name,phone,email};idToken=d.idToken;
+    localStorage.setItem("sindh_user",JSON.stringify(currentUser));localStorage.setItem("sindh_token",idToken);if(d.refreshToken)localStorage.setItem("sindh_refresh_token",d.refreshToken);
+    try{
+      await db("customers/"+d.localId,{method:"PUT",body:JSON.stringify({uid:d.localId,name,phone,email,createdAt:Date.now()})});
+    }catch(profileErr){ console.warn("Customer profile save failed:",profileErr); }
+    goCheckout?openCheckout():closeModal();
+  }catch(e){
+    const msg=String(e.message||"");
+    if(msg.includes("EMAIL_EXISTS")){
+      openModal(`<h2>Account Already Exists</h2><p>An account is already registered with this email address.</p><p>Please use <b>Sign In</b> with your existing email and password.</p><div class="actions"><button class="primary" onclick="openAccount(${goCheckout})">Sign In</button></div>`);
+    }else if(msg.includes("OPERATION_NOT_ALLOWED")){
+      openModal(`<h2>Account Registration Unavailable</h2><p>Account registration is temporarily unavailable. Please try again later.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+    }else{
+      console.error(e);
+      openModal(`<h2>Account Could Not Be Created</h2><p>We could not create your account right now. Please check your details and try again.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+    }
+  }
+}
+async function login(){
+  const email=$("authEmail").value.trim(),password=$("authPass").value;
+  if(!email||!password)return openModal(`<h2>Missing Sign-In Details</h2><p>Please enter your email address and password.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+  try{
+    const d=await authCall("signInWithPassword",email,password);
+    let profile={uid:d.localId,email:d.email};
+    try{profile={...profile,...(await db("customers/"+d.localId)||{})}}catch(_){ }
+    currentUser=profile;idToken=d.idToken;localStorage.setItem("sindh_user",JSON.stringify(currentUser));localStorage.setItem("sindh_token",idToken);if(d.refreshToken)localStorage.setItem("sindh_refresh_token",d.refreshToken);
+    closeModal();
+  }catch(e){
+    console.error(e);
+    openModal(`<h2>Sign In Failed</h2><p>The email or password is incorrect, or the account could not be reached. Please check your details and try again.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+  }
+}
+function logout(){currentUser=null;idToken="";localStorage.removeItem("sindh_user");localStorage.removeItem("sindh_token");localStorage.removeItem("sindh_refresh_token");closeModal();}
+
+async function refreshAuthToken(){
+  if(!refreshToken) return false;
+  try{
+    const r=await fetch("https://securetoken.googleapis.com/v1/token?key="+API_KEY,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"grant_type=refresh_token&refresh_token="+encodeURIComponent(refreshToken)});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.error?.message||"TOKEN_REFRESH_FAILED");
+    idToken=d.id_token; refreshToken=d.refresh_token||refreshToken;
+    localStorage.setItem("sindh_token",idToken); localStorage.setItem("sindh_refresh_token",refreshToken);
+    if(currentUser && d.user_id){ currentUser.uid=d.user_id; localStorage.setItem("sindh_user",JSON.stringify(currentUser)); }
+    return true;
+  }catch(e){ console.warn("Auth token refresh failed:",e); return false; }
+}
+
+function formatOrderDateTime(ts){
+  if(!ts)return "-";
+  return new Date(Number(ts)).toLocaleString("en-PK",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Karachi"});
+}
+
+async function openOrders(){
+  if(!currentUser)return openAccount();
+  try{
+    const data=await db("orders?orderBy=\"customerId\"&equalTo=\""+encodeURIComponent(currentUser.uid)+"\"");
+    const all=Object.values(data||{}).filter(o=>o.customerId===currentUser.uid).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    const current=all.filter(o=>!["Cancelled","Delivered"].includes(o.status));
+    const cancelled=all.filter(o=>o.status==="Cancelled"),history=all.filter(o=>o.status==="Delivered");
+    const block=(title,list)=>`<section class="naheed-orders-section"><h3>${title}<span>${list.length}</span></h3>${list.length?list.map(o=>`<article class="naheed-order-card"><div class="naheed-order-card-head"><div><small>ORDER NUMBER</small><b>${esc(o.orderCode||"Order")}</b></div><span class="status naheed-order-status ${String(o.status||"Pending").toLowerCase().replace(/[^a-z]+/g,"-")}">${esc(o.status||"Pending")}</span></div><div class="naheed-order-date">Placed on ${esc(formatOrderDateTime(o.createdAt))}</div><div class="naheed-order-products">${(o.items||[]).map(i=>`<div class="naheed-order-product"><span>${esc(i.name)} <b>× ${Number(i.quantity||1)}</b></span><b>Rs. ${money(i.subtotal)}</b></div>`).join("")}</div><div class="naheed-order-card-total"><span>Total Amount</span><strong>Rs. ${money(o.total)}</strong></div>${o.status==="Pending"?`<button class="secondary naheed-cancel-order" onclick="cancelOrder('${esc(o.orderCode)}')">Cancel Order</button>`:""}</article>`).join(""):'<div class="naheed-empty-orders"><span>📦</span><p>No orders in this section yet.</p></div>'}</section>`;
+    openModal(`<div class="naheed-orders-page"><div class="naheed-section-kicker">YOUR ACCOUNT</div><h2>My Orders</h2><p class="naheed-orders-intro">Track your recent purchases and review previous orders.</p><div class="naheed-orders-tabs"><span>Current <b>${current.length}</b></span><span>Delivered <b>${history.length}</b></span><span>Cancelled <b>${cancelled.length}</b></span></div>${block("Current Orders",current)}${block("Order History",history)}${block("Cancelled Orders",cancelled)}</div>`);
+  }catch(e){console.error(e);openModal(`<h2>Orders Unavailable</h2><p>We could not load your orders right now. Please check your internet connection and try again.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);}
+}
+async function cancelOrder(code){
+  try{
+    const data=await db("orders?orderBy=\"customerId\"&equalTo=\""+encodeURIComponent(currentUser.uid)+"\"");
+    const found=Object.entries(data||{}).find(([_,o])=>o.orderCode===code && o.customerId===currentUser.uid);
+    if(!found)return openModal(`<h2>Order Not Found</h2><p>We could not find this order in your account.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+    await db("orders/"+found[0],{method:"PATCH",body:JSON.stringify({status:"Cancelled",cancelledAt:Date.now()})});
+    openOrders();
+  }catch(e){
+    console.error(e);
+    openModal(`<h2>Cancellation Failed</h2><p>We could not cancel this order right now. Please try again.</p><div class="actions"><button class="primary" onclick="closeModal()">OK</button></div>`);
+  }
+}
+
+function showPolicy(type){
+  const titles={privacy:"🔒 Privacy Policy",terms:"📄 Terms &amp; Conditions",returns:"↩️ Return &amp; Refund Policy"};
+  const key=type==="returns"?"return":type;
+  const text=String(sitePages[key]||defaultPages[key]||"").trim();
+  openModal(`<h2>${titles[type]||"Information"}</h2><div style="white-space:pre-line;line-height:1.65;color:#444">${esc(text)}</div><div class="actions"><button class="primary" onclick="closeModal()">Close</button></div>`);
+}
+function openWhatsApp(){window.location.href="https://wa.me/"+WA+"?text="+encodeURIComponent("Assalam o Alaikum Sindh Mart, mujhe help chahiye.");}
+function openDrawer(){$("drawer").classList.add("open");$("drawerShade").style.display="block"}
+function closeDrawer(){$("drawer").classList.remove("open");$("drawerShade").style.display="none"}
+function goHome(){closeDrawer();window.scrollTo({top:0,behavior:"smooth"})}
+let modalOpen=false,modalHistoryPushed=false;
+function openModal(content){const box=$("modal"),m=String(content||"");const match=m.match(/<h2[^>]*>([\s\S]*?)<\/h2>/i);const title=match?match[1].replace(/<[^>]*>/g,"").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">"):"Sindh Mart";const body=match?m.replace(match[0],""):m;box.innerHTML=`<div class="appScreenHeader"><button class="appScreenBack" aria-label="Back" onclick="closeModal()">‹</button><div class="appScreenTitle">${esc(title)}</div><button class="appScreenBack" aria-label="Close" onclick="closeModal()" style="font-size:20px">×</button></div><div class="appScreenBody">${body}</div>`;$("modalShade").style.display="block";document.body.style.overflow="hidden";modalOpen=true;if(!modalHistoryPushed){history.pushState({sindhModal:true},"");modalHistoryPushed=true;}}
+function closeModal(e){if(e && e.target!==$("modalShade"))return;if(!modalOpen)return;$("modalShade").style.display="none";document.body.style.overflow="";modalOpen=false;if(modalHistoryPushed){modalHistoryPushed=false;if(history.state&&history.state.sindhModal)history.back();}}
+window.addEventListener("popstate",()=>{if(modalOpen){$("modalShade").style.display="none";document.body.style.overflow="";modalOpen=false;modalHistoryPushed=false;}});
+let slide=0; startSlider();
+renderCartBar();loadData();
+</script>
+</body>
+</html>
